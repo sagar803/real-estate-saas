@@ -35,144 +35,22 @@ import { LocationMultiSelect } from '@/components/location-multi-select'
 import { PriceRangeSelect } from '@/components/price-range'
 import { BedroomSelect } from '@/components/bedroom-select'
 import PropertyDetails from '@/components/display-property'
-
-
-function parseXML(xml) {
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xml, 'text/xml');
-  
-  const entries = xmlDoc.getElementsByTagName('entry');
-  const results = [];
-
-  for (let i = 0; i < entries.length; i++) {
-    const entry = entries[i];
-    
-    const id = entry.getElementsByTagName('id')[0].textContent;
-    const updated = entry.getElementsByTagName('updated')[0].textContent;
-    const published = entry.getElementsByTagName('published')[0].textContent;
-    const title = entry.getElementsByTagName('title')[0].textContent.trim();
-    const summary = entry.getElementsByTagName('summary')[0].textContent.trim();
-    
-    const authors = [];
-    const authorElements = entry.getElementsByTagName('author');
-    for (let j = 0; j < authorElements.length; j++) {
-      const author = authorElements[j].getElementsByTagName('name')[0].textContent;
-      authors.push(author);
-    }
-    
-    const links = {
-      href: [],
-      pdf: []
-    };
-    const linkElements = entry.getElementsByTagName('link');
-    for (let k = 0; k < linkElements.length; k++) {
-      const href = linkElements[k].getAttribute('href').startsWith('http://') 
-        ? linkElements[k].getAttribute('href').replace('http://', 'https://') 
-        : linkElements[k].getAttribute('href');
-      const rel = linkElements[k].getAttribute('rel');
-      
-      if (rel === 'related') {
-        links.pdf.push(href);
-      } else if (rel === 'alternate') {
-        links.href.push(href);
-      }
-    }
-
-    results.push({
-      id,
-      updated,
-      published,
-      title,
-      summary,
-      authors,
-      links
-    });
-  }
-
-  return results;
-}
+import {propertyData} from '../../data.js'
 
 
 async function fetchPropertyListings(location, minPrice, bedrooms) {
+  const areaMap = new Map([
+    ['DLF Phase 1', 1],
+    ['DLF Phase 2', 2],
+    ['DLF Phase 3', 3],
+    ['DLF Phase 4', 4],
+    ['DLF Phase 5', 5]
+  ]);
+
+  const id = areaMap.get(location);
   console.log(location, minPrice,  bedrooms)
-  return {
-    "meta": {
-      "location": "in DLF, Sector 77 Gurgaon, Gurgaon, Haryana",
-      "builtUpArea": "(332.31 sq.m.)",
-      "areaUnit": "4 Bathrooms",
-      "bedrooms": "4 Bedrooms",
-      "bathrooms": "4 Bathrooms",
-      "balconies": "3 Balconies",
-      "additionalRooms": "Pooja Room,Study Room",
-      "price": "6.98 Crore",
-      "address": "(332.31 sq.m.)",
-      "floorNumber": "16th   of 32 Floors",
-      "totalFloors": "16th   of 32 Floors",
-      "facing": "South",
-      "overlooking": "Main Road,Club,Park/Garden,Pool,Others",
-      "possessionDate": "Jul 2029"
-    },
-    "images": [
-      "https://imagecdn.99acres.com/media1/25106/7/502127457M-1719997586555.jpg",
-      "https://imagecdn.99acres.com/media1/25106/7/502127459M-1719997588760.jpg",
-      "https://static.99acres.com/universalapp/img/projectnoimage.webp",
-      "https://static.99acres.com/universalapp/img/projectnoimage.webp",
-      "https://static.99acres.com/universalapp/img/projectnoimage.webp",
-      "https://static.99acres.com/universalapp/img/projectnoimage.webp",
-      "https://static.99acres.com/universalapp/img/projectnoimage.webp",
-      "https://static.99acres.com/universalapp/img/projectnoimage.webp",
-      "https://static.99acres.com/universalapp/img/projectnoimage.webp",
-      "https://static.99acres.com/universalapp/img/projectnoimage.webp"
-    ],
-    "ratings": {
-      "safety": "3.7 out of 5",
-      "connectivity": "3.8 out of 5",
-      "environment": "3.9 out of 5",
-      "lifestyle": "3.8 out of 5"
-    },
-    "furnishingDetails": "Semifurnished\nFurnishing Details\n1 Water Purifier\n1 Exhaust Fan\n1 Stove\n1 Modular Kitchen\n1 Chimney\nNo AC\nNo Bed\nNo Curtains\nNo Dining Table\nNo Fan\nNo Geyser\nNo Light\nNo Microwave\nNo Fridge\nNo Sofa\nNo TV\nNo Wardrobe\nNo Washing Machine",
-    "features": [
-      "1 Water Purifier",
-      "1 Exhaust Fan",
-      "1 Stove",
-      "1 Modular Kitchen",
-      "1 Chimney",
-      "No AC",
-      "No Bed",
-      "No Curtains",
-      "No Dining Table",
-      "No Fan",
-      "No Geyser",
-      "No Light",
-      "No Microwave",
-      "No Fridge",
-      "No Sofa",
-      "No TV",
-      "No Wardrobe",
-      "No Washing Machine",
-      "Security / Fire Alarm",
-      "Lift(s)",
-      "Centrally Air Conditioned",
-      "Water purifier",
-      "High Ceiling Height",
-      "Maintenance Staff",
-      "Water Storage",
-      "Separate entry for servant room",
-      "Bank Attached Property",
-      "Piped-gas",
-      "Visitor Parking",
-      "Swimming Pool",
-      "Park",
-      "Security Personnel",
-      "Natural Light",
-      "Internet/wi-fi connectivity",
-      "Airy Rooms",
-      "Fitness Centre / GYM",
-      "Waste Disposal",
-      "Rain Water Harvesting",
-      "Water softening plant"
-    ]
-  }
+  console.log(id);
+  return propertyData.filter(d => d.areaId == id)
 }
 
 async function fetchArxiv(query, time) {
