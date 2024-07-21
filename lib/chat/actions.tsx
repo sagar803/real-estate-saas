@@ -36,10 +36,12 @@ import { PriceRangeSelect } from '@/components/price-range'
 import { BedroomSelect } from '@/components/bedroom-select'
 import PropertyDetails from '@/components/display-property'
 import {propertyData} from '../../data.js'
+import { supabase } from '../../lib/supabaseClient';
 
 
-async function fetchPropertyListings(location, minPrice, bedrooms) {
-  const areaMap = new Map([
+
+async function fetchPropertyListings(location, maxPrice, minBedrooms) {
+  const areaIdMap = new Map([
     ['DLF Phase 1', 1],
     ['DLF Phase 2', 2],
     ['DLF Phase 3', 3],
@@ -47,10 +49,26 @@ async function fetchPropertyListings(location, minPrice, bedrooms) {
     ['DLF Phase 5', 5]
   ]);
 
-  const id = areaMap.get(location);
-  console.log(location, minPrice,  bedrooms)
-  console.log(id);
-  return propertyData.filter(d => d.areaId == id)
+  const areaId = areaIdMap.get(location);
+
+  const queryParams = new URLSearchParams({
+    max_price: maxPrice,
+    area_id: areaId,
+    min_bedrooms: minBedrooms
+  }).toString();
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/queryProperties?${queryParams}`);
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to fetch properties');
+    }
+    return result.data;
+  } catch (error) {
+    console.error('Error fetching properties:', error);
+    return [];
+  }
 }
 
 async function fetchArxiv(query, time) {
@@ -237,7 +255,6 @@ async function submitUserMessage(content: string) {
           yield <SpinnerMessage />
           await sleep(1000)
     
-          console.log(ranges)
           const toolCallId = nanoid()
     
           aiState.done({
