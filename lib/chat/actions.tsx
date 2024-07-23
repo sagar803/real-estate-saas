@@ -35,21 +35,44 @@ import { LocationMultiSelect } from '@/components/location-multi-select'
 import { PriceRangeSelect } from '@/components/price-range'
 import { BedroomSelect } from '@/components/bedroom-select'
 import PropertyDetails from '@/components/display-property'
-import {propertyData} from '../../data.js'
 import { supabase } from '../../lib/supabaseClient';
 
-
-
 async function fetchPropertyListings(location, maxPrice, minBedrooms) {
+
   const areaIdMap = new Map([
     ['DLF Phase 1', 1],
     ['DLF Phase 2', 2],
     ['DLF Phase 3', 3],
     ['DLF Phase 4', 4],
-    ['DLF Phase 5', 5]
+    ['DLF Phase 5', 5],
+    ['DLF Garden City - Sector 89 Gurgaon', 6],
+    ['DLF Garden City - Sector 90 Gurgaon', 7],
+    ['DLF Garden City - Sector 91 Gurgaon', 8],
+    ['DLF Garden City - Sector 92 Gurgaon', 9],
+    ['DLF Privana Gurgaon', 10],
+    ['DLF Aralias Gurgaon', 11],
+    ['DLF Magnolias Gurgaon', 12],
+    ['DLF Camellias Gurgaon', 13],    
+    ['Sushant Lok-1 Gurgaon', 14],
+    ['Sushant Lok-2 Gurgaon', 15],
+    ['Sushant Lok-3 Gurgaon', 16],    
+    ['South City-1 Gurgaon', 17],
+    ['South City-2 Gurgaon', 18],
+    ['Suncity 1 Gurgaon', 19],
+    ['Suncity 2 Gurgaon', 20],
+    ['M3M Golf Estate Gurgaon', 22],
+    ['M3M Golf Hills Gurgaon', 23],
+    ['Central Park Resorts Gurgaon', 25],
+    ['Central Park Flower Valley Gurgaon', 26],
+    ['Paras Quartier Gurgaon', 27],
+    
+    ['Paras The Manor Gurgaon', 28],
+    ['EMAAR Emerald Hills Gurgaon', 21],    
+    ['M3M Altitude Gurgaon', 24],
   ]);
-
+  
   const areaId = areaIdMap.get(location);
+  console.log(location, maxPrice, minBedrooms, areaId)
 
   const queryParams = new URLSearchParams({
     max_price: maxPrice,
@@ -68,30 +91,6 @@ async function fetchPropertyListings(location, maxPrice, minBedrooms) {
   } catch (error) {
     console.error('Error fetching properties:', error);
     return [];
-  }
-}
-
-async function fetchArxiv(query, time) {
-  console.log(query, time)
-  try {
-    const apiUrl = `http://export.arxiv.org/api/query?search_query=${encodeURIComponent(query +" "+time)}${time ? "&start=0&max_results=50" : ""}`;
-    const response = await fetch(apiUrl);
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const xml = await response.text();
-    const json = parseXML(xml)    
-    
-    if (time) {
-      let parsedDate = new Date(time + '-01T00:00:00Z');            
-      const filteredData = json.filter((it) => new Date(it.published) >= parsedDate)      
-      console.log(filteredData.length);      
-      if (filteredData.length === 0) return "No relevant data found within the specified time period";      
-      return filteredData.slice(0, 8);
-    } else {
-      return json;
-    }
-  } catch (error) {
-      console.error('Error fetching or converting data:', error);
-      return "Something went wrong";
   }
 }
 
@@ -128,31 +127,51 @@ async function submitUserMessage(content: string) {
 
         Main Categories and Their Subcategories:
         Location:
-        - DLF The Aralias
         - DLF Phase 1
         - DLF Phase 2
         - DLF Phase 3
         - DLF Phase 4
         - DLF Phase 5
-        - Sushant Lok
-        - Golf Course Road
-        - Sohna Road
-        - MG Road
-        - Others
+        - DLF Garden City - Sector 89 Gurgaon
+        - DLF Garden City - Sector 90 Gurgaon
+        - DLF Garden City - Sector 91 Gurgaon
+        - DLF Garden City - Sector 92 Gurgaon
+        - DLF Privana Gurgaon
+        - DLF Aralias Gurgaon
+        - DLF Magnolias Gurgaon
+        - DLF Camellias Gurgaon
+        - Sushant Lok-1 Gurgaon
+        - Sushant Lok-2 Gurgaon
+        - Sushant Lok-3 Gurgaon
+        - South City-1 Gurgaon
+        - South City-2 Gurgaon
+        - Suncity 1 Gurgaon
+        - Suncity 2 Gurgaon
+        - EMAAR Emerald Hills Gurgaon
+        - M3M Golf Estate Gurgaon
+        - M3M Golf Hills Gurgaon
+        - M3M Altitude Gurgaon
+        - Central Park Resorts Gurgaon
+        - Central Park Flower Valley Gurgaon
+        - Paras Quartier Gurgaon
+        - Paras The Manor Gurgaon
 
         Price Range:
         - Below 1 Crore
-        - 1 Crore to 2 Crores
-        - 2 Crores to 5 Crores
-        - 5 Crores to 10 Crores
-        - Above 10 Crores
+        - Below 5 Crore
+        - Below 10 Crores
+        - Below 20 Crores
+        - Below 50 Crores
 
         Bedrooms:
         - 1 Bedroom
         - 2 Bedrooms
         - 3 Bedrooms
         - 4 Bedrooms
-        - 5+ Bedrooms
+        - 5 Bedrooms
+        - 6 Bedrooms
+        - 7 Bedrooms
+        - 8 Bedrooms
 
         Additional Functions:
         1. show_price_range_selection: If the user has mentioned a location subcategory, call this function to display price range options.

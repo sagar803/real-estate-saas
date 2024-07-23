@@ -9,53 +9,37 @@ import { Home, Bed, Calendar, Bath, IndianRupee, Building, Compass, Star, StarHa
 import { StarFilledIcon } from '@radix-ui/react-icons';
 
 const PropertyCard = ({listing, idx}) => {
+
+    let isInfinite = listing.features.length > 1;
+
     const featureSettings = {
-        className: "slider variable-width",
         dots: false,
-        infinite: true,
+        infinite: isInfinite,
         autoplay: true,
         variableWidth: true,
-        rows: 1,
         pauseOnHover: true,
         autoplaySpeed: 2000,
         speed: 2000,
-    
-        responsive: [
-          {
-            breakpoint: 1024,
-            settings: {
-              slidesToShow: 2,
-              slidesToScroll: 1,
-            }
-          },
-          {
-            breakpoint: 600,
-            settings: {
-              slidesToShow: 1,
-              slidesToScroll: 1
-            }
-          }
-        ]
     };
     
     const imageSettings = {
-    dots: false,
-    infinite: true,
-    speed: 1000,
-    slidesToShow: 1, // Show 2 images at a time
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: true, // Add arrows for navigation
-    responsive: [
-        {
-        breakpoint: 1024,
-        settings: {
-            slidesToShow: 1, // Show 1 image at a time on smaller screens
-            slidesToScroll: 1,
-        }
-        }
-    ]
+        dots: false,
+        infinite: true,
+        autoplay: true,
+        speed: 1000,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplaySpeed: 3000,
+        arrows: true,
+        responsive: [
+            {
+            breakpoint: 1024,
+            settings: {
+                slidesToShow: 1, // Show 1 image at a time on smaller screens
+                slidesToScroll: 1,
+            }
+            }
+        ]
     };
 
     const {
@@ -90,12 +74,12 @@ const PropertyCard = ({listing, idx}) => {
 
           {/* Meta */}
           <div className="grid grid-cols-1 gap-1 text-sm text-gray-500">
-                {meta.builtUpArea && (
+                {/* {meta.builtUpArea && (
                     <div className="flex items-center space-x-2">
                     <Home size={18} className="text-gray-700" />
                     <p className="text-sm text-gray-700">{meta.builtUpArea}</p>
                     </div>
-                )}
+                )} */}
                 {meta.bedrooms && (
                     <div className="flex items-center space-x-2 h-4">
                     <Bed size={16} />
@@ -127,8 +111,8 @@ const PropertyCard = ({listing, idx}) => {
                     </div>
                 )}
             </div>
-          {/* Features */}
 
+          {/* Features */}
           <div className="mt-2">
             <Slider {...featureSettings}>
               {features.map((feature, index) => (
@@ -138,8 +122,8 @@ const PropertyCard = ({listing, idx}) => {
               ))}
             </Slider>
           </div>
+
           <div className="mt-2">
-            {/* <h3 className="text-xl font-semibold mb-2">Ratings:</h3> */}
             <ul className="grid grid-cols-1 gap-1 text-gray-500">
               {Object.entries(ratings).map(([key, value], index) => (
                 <li key={index} className="flex items-center space-x-2 text-sm">
@@ -150,10 +134,6 @@ const PropertyCard = ({listing, idx}) => {
               ))}
             </ul>
           </div>
-          {/* <div className="mt-6">
-            <h3 className="text-xl font-semibold mb-2">Furnishing Details:</h3>
-            <p className="text-gray-700">{furnishingDetails}</p>
-          </div> */}
         </div>
       );
 }
