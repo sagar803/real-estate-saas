@@ -72,7 +72,7 @@ export function LocationMultiSelect({ locations }: MultiSelectProps) {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
           />
-          <Input
+          {/* <Input
             type="text"
             placeholder="Add location..."
             value={customLocation}
@@ -83,7 +83,7 @@ export function LocationMultiSelect({ locations }: MultiSelectProps) {
             className="cursor-pointer border border-gray-100 rounded-lg p-[8px] transition duration-200 hover:border-black active:border-gray-200"
           >
             <Check strokeWidth={1} size={20} />
-          </div>
+          </div> */}
         </div>
         <div className="mt-2 max-h-60 overflow-auto">
           {filteredLocations.map(location => (

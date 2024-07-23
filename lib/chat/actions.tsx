@@ -36,8 +36,9 @@ import { PriceRangeSelect } from '@/components/price-range'
 import { BedroomSelect } from '@/components/bedroom-select'
 import PropertyDetails from '@/components/display-property'
 import { supabase } from '../../lib/supabaseClient';
+import { PropertyFilter } from '@/components/property/filter'
 
-async function fetchPropertyListings(location, maxPrice, minBedrooms) {
+async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms) {
 
   const areaIdMap = new Map([
     ['DLF Phase 1', 1],
@@ -71,17 +72,21 @@ async function fetchPropertyListings(location, maxPrice, minBedrooms) {
     ['M3M Altitude Gurgaon', 24],
   ]);
   
-  const areaId = areaIdMap.get(location);
-  console.log(location, maxPrice, minBedrooms, areaId)
+  const areaIds = locations?.map(location => areaIdMap.get(location)).filter(id => id !== undefined);
+
+  // console.log(location, minPrice, maxPrice, minBedrooms, maxBedrooms, areaIds)
 
   const queryParams = new URLSearchParams({
+    min_price: minPrice,
     max_price: maxPrice,
-    area_id: areaId,
-    min_bedrooms: minBedrooms
-  }).toString();
+    min_bedrooms: minBedrooms,
+    max_bedrooms: maxBedrooms,
+  })
+
+  areaIds.forEach(id => queryParams.append('area_id', id));
 
   try {
-    const response = await fetch(`http://localhost:3000/api/queryProperties?${queryParams}`);
+    const response = await fetch(`http://localhost:3000/api/queryProperties?${queryParams.toString()}`);
     const result = await response.json();
 
     if (!response.ok) {
@@ -121,12 +126,10 @@ async function submitUserMessage(content: string) {
         You are a property listing assistant, specializing in helping users find and discuss property listings in Gurgaon.
         Procedure for Handling User Queries:
         
-        1. Identify Location: When a user is asking about property and has not provided any location subcategories then use the \`show_location_selection\` function to display subcategories,
-        2. Lookup Subcategories: Refer to the list of main categories and their corresponding subcategories provided.
-        3. Check for Subcategory Mention: If the user has already mentioned a subcategory, there is no need to call \`show_location_selection\`.
+        1. Identify Aresa: When a user is asking about property and has not provided any area then use the \`show_location_selection\` function to display subcategories,
 
         Main Categories and Their Subcategories:
-        Location:
+        Areas in gurgaon:
         - DLF Phase 1
         - DLF Phase 2
         - DLF Phase 3
@@ -156,27 +159,9 @@ async function submitUserMessage(content: string) {
         - Paras Quartier Gurgaon
         - Paras The Manor Gurgaon
 
-        Price Range:
-        - Below 1 Crore
-        - Below 5 Crore
-        - Below 10 Crores
-        - Below 20 Crores
-        - Below 50 Crores
-
-        Bedrooms:
-        - 1 Bedroom
-        - 2 Bedrooms
-        - 3 Bedrooms
-        - 4 Bedrooms
-        - 5 Bedrooms
-        - 6 Bedrooms
-        - 7 Bedrooms
-        - 8 Bedrooms
-
         Additional Functions:
-        1. show_price_range_selection: If the user has mentioned a location subcategory, call this function to display price range options.
-        2. show_bedroom_selection: If the user has mentioned both a location subcategory and a price range, call this function to display bedroom options.
-        3. show_property_listings: If the user has mentioned a location subcategory, price range, and bedroom option, call this function to display the property listings.
+        1. show_properties_filter: If the user has mentioned a location subcategory, and did not mentioned price range or bedrooms count then call this function to display UI for user to select price range and bedrooms count.
+        2. show_property_listings: If the user has mentioned a location subcategory, price range, and bedroom option, call this function to display the property listings.
         You can also engage in general conversation with users and provide detailed information about properties in Gurgaon.
     `
 ,
@@ -264,13 +249,13 @@ async function submitUserMessage(content: string) {
           )
         }
       },
-      show_price_range_selection: {
-        description: 'Show a UI for the user to select a price range.',
+
+      show_properties_filter: {
+        description: 'Show a UI for the user to select a price range and bedrooms count range.',
         parameters: z.object({
-          ranges: z.array(z.string()).describe('List of price ranges to choose from'),
-          title: z.string().describe('The title for the price range selection UI')
+          title: z.string().describe('The title for the filter UI')
         }),
-        generate: async function* ({ ranges, title }) {
+        generate: async function* ({ title }) {
           yield <SpinnerMessage />
           await sleep(1000)
     
@@ -286,9 +271,9 @@ async function submitUserMessage(content: string) {
                 content: [
                   {
                     type: 'tool-call',
-                    toolName: 'show_price_range_selection',
+                    toolName: 'show_properties_filter',
                     toolCallId,
-                    args: { ranges, title }
+                    args: { title }
                   }
                 ]
               },
@@ -298,9 +283,9 @@ async function submitUserMessage(content: string) {
                 content: [
                   {
                     type: 'tool-result',
-                    toolName: 'show_price_range_selection',
+                    toolName: 'show_properties_filter',
                     toolCallId,
-                    result: { ranges, title }
+                    result: { title }
                   }
                 ]
               }
@@ -309,73 +294,26 @@ async function submitUserMessage(content: string) {
     
           return (
             <BotCard>
-              <PriceRangeSelect ranges={ranges} />
+              <PropertyFilter />
             </BotCard>
           )
         }
       },
-      show_bedroom_selection: {
-        description: 'Show a UI for the user to select the number of bedrooms.',
-        parameters: z.object({
-          bedrooms: z.array(z.string()).describe('List of bedroom options to choose from'),
-          title: z.string().describe('The title for the bedroom selection UI')
-        }),
-        generate: async function* ({ bedrooms, title }) {
-          yield <SpinnerMessage />
-          await sleep(1000)
-    
-          const toolCallId = nanoid()
-    
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: [
-                  {
-                    type: 'tool-call',
-                    toolName: 'show_bedroom_selection',
-                    toolCallId,
-                    args: { bedrooms, title }
-                  }
-                ]
-              },
-              {
-                id: nanoid(),
-                role: 'tool',
-                content: [
-                  {
-                    type: 'tool-result',
-                    toolName: 'show_bedroom_selection',
-                    toolCallId,
-                    result: { bedrooms, title }
-                  }
-                ]
-              }
-            ]
-          })
-    
-          return (
-            <BotCard>
-              <BedroomSelect bedrooms={bedrooms} />
-            </BotCard>
-          )
-        }
-      },
+
       show_property_listings: {
         description: 'A tool for displaying property listings based on selected criteria.',
         parameters: z.object({
-          location: z.string().describe('Selected location'),
+          locations: z.array(z.string()).describe('array of Selected locations'),
           minPrice: z.number().describe('Minimum price for the search criteria'),
-          bedrooms: z.number().describe('Number of bedrooms for the search criteria')
+          maxPrice: z.number().describe('Maximum price for the search criteria'),
+          minBedrooms: z.number().describe('Minimum number of bedrooms for the search criteria'),
+          maxBedrooms: z.number().describe('Maximum number of bedrooms for the search criteria')
         }),
-        generate: async function* ({ location, minPrice, bedrooms }) {
+        generate: async function* ({ locations, minPrice, maxPrice, minBedrooms, maxBedrooms }) {
           yield <SpinnerMessage />
           await sleep(1000)
     
-          const listings = await fetchPropertyListings(location, minPrice, bedrooms)
+          const listings = await fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms)
           const toolCallId = nanoid()
     
           aiState.done({
@@ -390,7 +328,7 @@ async function submitUserMessage(content: string) {
                     type: 'tool-call',
                     toolName: 'show_property_listings',
                     toolCallId,
-                    args: { location, minPrice, bedrooms }
+                    args: { locations, minPrice, maxPrice, minBedrooms, maxBedrooms }
                   }
                 ]
               },

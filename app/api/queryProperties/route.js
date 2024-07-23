@@ -4,18 +4,29 @@ import { supabase } from '../../../lib/supabaseClient'
 export async function GET(request) {
   // Extract query parameters
   const { searchParams } = new URL(request.url)
+  const areaIds = searchParams.getAll('area_id').map(id => parseInt(id, 10))
   const maxPrice = parseInt(searchParams.get('max_price'), 10)
-  const areaId = parseInt(searchParams.get('area_id'), 10)
+  const minPrice = parseInt(searchParams.get('min_price'), 10)
   const minBedrooms = parseInt(searchParams.get('min_bedrooms'), 10)
+  const maxBedrooms = parseInt(searchParams.get('max_bedrooms'), 10)
 
-  // console.log('Query Parameters:', { maxPrice, areaId, minBedrooms })
+  console.log('Query Parameters:', {
+    minPrice,
+    maxPrice,
+    areaIds,
+    minBedrooms,
+    maxBedrooms
+  })
 
   let query = supabase.from('properties').select('*').limit(6)
 
-  if (!isNaN(areaId)) query = query.eq('area_id', areaId)
-  if (Boolean(maxPrice)) query = query.lte('meta->>price', `${maxPrice} Crore`)
+  if (areaIds.length > 0) query = query.in('area_id', areaIds)
+  if (Boolean(maxPrice)) query = query.lte('meta->>price', maxPrice)
+  if (Boolean(minPrice)) query = query.gte('meta->>price', minPrice)
   if (Boolean(minBedrooms))
     query = query.gte('meta->>bedrooms', `${minBedrooms} Bedrooms`)
+  if (Boolean(maxBedrooms))
+    query = query.lte('meta->>bedrooms', `${maxBedrooms} Bedrooms`)
 
   const { data, error } = await query
 

@@ -10,11 +10,12 @@ import { StarFilledIcon } from '@radix-ui/react-icons';
 
 const PropertyCard = ({listing, idx}) => {
 
-    let isInfinite = listing.features.length > 1;
+    let isImagesInfinite = listing.images.length > 1;
+    let isFeatureInfinite = listing.features.length > 1;
 
     const featureSettings = {
         dots: false,
-        infinite: isInfinite,
+        infinite: isFeatureInfinite,
         autoplay: true,
         variableWidth: true,
         pauseOnHover: true,
@@ -24,7 +25,7 @@ const PropertyCard = ({listing, idx}) => {
     
     const imageSettings = {
         dots: false,
-        infinite: true,
+        infinite: isImagesInfinite,
         autoplay: true,
         speed: 1000,
         slidesToShow: 1,
@@ -53,7 +54,7 @@ const PropertyCard = ({listing, idx}) => {
     const limitedImages = images.slice(0, 2);
 
     return (
-        <div key={idx} className="mb-2 p-4 border rounded-lg">
+        <div key={idx} className="mb-2 p-4 border rounded-lg shadow-lg">
           <div>
               <h2 className="text-md font-semibold inline mr-2">{meta.location}</h2>
               <p className="text-gray-600 text-sm inline">{meta.address}</p>
