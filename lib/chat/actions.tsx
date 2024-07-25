@@ -88,7 +88,7 @@ async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms,
   areaIds.forEach(id => queryParams.append('area_id', id));
 
   try {
-    const response = await fetch(`http://localhost:3000/api/queryProperties?${queryParams.toString()}`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/queryProperties?${queryParams.toString()}`);
     const result = await response.json();
 
     if (!response.ok) {

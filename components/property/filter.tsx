@@ -107,7 +107,7 @@ export function PropertyFilter() {
   }
 
   const handleSkip = async (event: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => {
-    const query = `The selected price range is null and the selected number of bedrooms is null, now call the show_property_listing function to display the properties.`;
+    const query = `The selected price range is 0 and the selected number of bedrooms is 0, now call the show_property_listing function to display the properties.`;
     event.preventDefault();
     const response = await submitUserMessage(query);
     setMessages(currentMessages => [...currentMessages, response]);
