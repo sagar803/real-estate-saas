@@ -37,6 +37,8 @@ import { BedroomSelect } from '@/components/bedroom-select'
 import PropertyDetails from '@/components/display-property'
 import { supabase } from '../../lib/supabaseClient';
 import { PropertyFilter } from '@/components/property/filter'
+import { Skeleton } from '@/components/ui/skeleton'
+import PropertyDetailsSkeleton from '@/components/property/property-card-skeleton'
 
 async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms) {
 
@@ -294,12 +296,14 @@ async function submitUserMessage(content: string) {
     
           return (
             <BotCard>
+              <p className='pb-4'>Select a price range and number of bedrooms to refine your search.</p>
               <PropertyFilter />
             </BotCard>
           )
         }
       },
 
+  
       show_property_listings: {
         description: 'A tool for displaying property listings based on selected criteria.',
         parameters: z.object({
@@ -310,7 +314,11 @@ async function submitUserMessage(content: string) {
           maxBedrooms: z.number().describe('Maximum number of bedrooms for the search criteria')
         }),
         generate: async function* ({ locations, minPrice, maxPrice, minBedrooms, maxBedrooms }) {
-          yield <SpinnerMessage />
+          yield (
+            <BotCard>
+              <PropertyDetailsSkeleton />
+            </BotCard>
+          )
           await sleep(1000)
     
           const listings = await fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms)
@@ -349,9 +357,22 @@ async function submitUserMessage(content: string) {
     
           return (
             <BotCard>
-              <PropertyDetails listings={listings} />
+              {listings && listings.length === 0 ? (
+                <p>No results found for {locations}. Try searching a different area.</p>
+              ) : (
+                <>
+                  <p className='pb-4'>
+                    {maxPrice === 0 
+                      ? `Showing properties located in ${locations}`
+                      : `Showing properties located in ${locations} with prices ranging from ${(minPrice / 10000000).toFixed(2)} cr to ${(maxPrice / 10000000).toFixed(2)} cr and bedrooms ranging from ${minBedrooms} to ${maxBedrooms}.`
+                    }
+                  </p>
+                  <PropertyDetails listings={listings} />
+                  </>
+                )}
             </BotCard>
-          )
+          );
+
         }
       }
     }
