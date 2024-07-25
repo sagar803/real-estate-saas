@@ -12,13 +12,12 @@ import { GlobalStateProvider } from '@/context/GlobalContext'
 
 
 export const metadata = {
-  metadataBase: new URL(`https://${process.env.VERCEL_URL}`),
   title: {
-    default: 'Diamond GenText',
-    template: `%s - Diamond GenText`
+    default: 'Real Estate Mogul',
+    template: `%s - Real Estate Mogul`
   },
   description:
-    'Talk to your own research assistant',
+    'Talk to your own real estate mogul',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon-16x16.png',
