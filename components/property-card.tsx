@@ -64,7 +64,7 @@ const PropertyCard = ({listing, idx}) => {
                 limitedImages && limitedImages.length > 0 ? (
                     <Slider {...imageSettings}>
                       {limitedImages.map((image, index) => (
-                          <img src={image} alt={`Property ${index + 1}`} className="px-1 rounded-lg w-full h-44 object-cover" />
+                          <img key={index} src={image} alt={`Property ${index + 1}`} className="px-1 rounded-lg w-full h-44 object-cover" />
                       ))}
                     </Slider>
                 ) : (
