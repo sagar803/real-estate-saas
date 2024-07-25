@@ -18,17 +18,20 @@ export async function GET(request) {
     maxBedrooms
   })
 
-  let query = supabase.from('properties').select('*').limit(6)
+  if (areaIds.length <= 0) return NextResponse.json({}, { status: 200 })
 
-  if (areaIds.length > 0) query = query.in('area_id', areaIds)
-  if (Boolean(maxPrice)) query = query.lte('meta->>price', maxPrice)
-  if (Boolean(minPrice)) query = query.gte('meta->>price', minPrice)
-  if (Boolean(minBedrooms))
+  let query = supabase.from('properties').select('*')
+  query = query.in('area_id', areaIds)
+
+  if (!isNaN(maxPrice) && !isNaN(minPrice) && maxPrice !== 0) {
+    query = query.gte('meta->>price', minPrice)
+    query = query.lte('meta->>price', maxPrice)
+  }
+  if (!isNaN(maxBedrooms) && !isNaN(minBedrooms) && maxBedrooms !== 0) {
     query = query.gte('meta->>bedrooms', `${minBedrooms} Bedrooms`)
-  if (Boolean(maxBedrooms))
     query = query.lte('meta->>bedrooms', `${maxBedrooms} Bedrooms`)
-
-  const { data, error } = await query
+  }
+  let { data, error } = await query
 
   if (error) {
     console.error('Error executing query:', error)
@@ -36,6 +39,7 @@ export async function GET(request) {
   }
 
   console.log('Query Result:', data.length)
+  data = data.slice(0, 6)
 
   return NextResponse.json({ data }, { status: 200 })
 }

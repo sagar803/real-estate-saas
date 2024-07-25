@@ -11,10 +11,11 @@ import { useActions, useUIState } from 'ai/rsc';
 import type { AI } from '../../vercel-ai-rsc/app/action';
 
 interface MultiSelectProps {
-  locations: string[];
+  locations: string[],
+  title: string
 }
 
-export function LocationMultiSelect({ locations }: MultiSelectProps) {
+export function LocationMultiSelect({ title, locations }: MultiSelectProps) {
   const [, setMessages] = useUIState<typeof AI>();
   const { submitUserMessage } = useActions<typeof AI>();
   const [selected, setSelected] = React.useState<string[]>([]);
@@ -49,7 +50,8 @@ export function LocationMultiSelect({ locations }: MultiSelectProps) {
   };
 
   return (
-    <form>
+    <form className="rounded-lg shadow-lg border md:px-8 p-4">
+      <p className="font-semibold">{title}</p>
       <div className="space-y-2">
         <div className="flex flex-wrap gap-2">
           {selected.map(location => (

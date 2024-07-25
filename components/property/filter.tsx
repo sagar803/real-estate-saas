@@ -68,7 +68,7 @@ export const PriceRangeSlider: React.FC<{ onChange: (value: number[]) => void }>
     <RangeSlider
       min={0}
       max={500000000}
-      step={50000000}
+      step={100000000}
       defaultValue={[0, 200000000]}
       onValueChange={handleValueChange}
       formatValue={value => `₹${(value / 10000000).toFixed(2)} Cr`}

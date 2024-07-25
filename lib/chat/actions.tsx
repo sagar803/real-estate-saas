@@ -31,7 +31,7 @@ import {
 import { saveChat } from '@/app/actions'
 import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
-import { LocationMultiSelect } from '@/components/location-multi-select'
+import { LocationMultiSelect } from '@/components/property/location-multi-select'
 import { PriceRangeSelect } from '@/components/price-range'
 import { BedroomSelect } from '@/components/bedroom-select'
 import PropertyDetails from '@/components/display-property'
@@ -125,47 +125,60 @@ async function submitUserMessage(content: string) {
     model: openai('gpt-3.5-turbo'),
     initial: <SpinnerMessage />,
     system: `\
-        You are a property listing assistant, specializing in helping users find and discuss property listings in Gurgaon.
-        Procedure for Handling User Queries:
-        
-        1. Identify Aresa: When a user is asking about property and has not provided any area then use the \`show_location_selection\` function to display subcategories,
+    You are a property listing assistant, specializing in helping users find and discuss property listings in Gurgaon.
+    Procedure for Handling User Queries:
+    
+    1. Identify Intent and Value: 
+        - Engage in conversation to determine the user's intention of buying.
+        - Identify high-value customers by gauging their interest and readiness to make a purchase.
 
-        Main Categories and Their Subcategories:
-        Areas in gurgaon:
-        - DLF Phase 1
-        - DLF Phase 2
-        - DLF Phase 3
-        - DLF Phase 4
-        - DLF Phase 5
-        - DLF Garden City - Sector 89 Gurgaon
-        - DLF Garden City - Sector 90 Gurgaon
-        - DLF Garden City - Sector 91 Gurgaon
-        - DLF Garden City - Sector 92 Gurgaon
-        - DLF Privana Gurgaon
-        - DLF Aralias Gurgaon
-        - DLF Magnolias Gurgaon
-        - DLF Camellias Gurgaon
-        - Sushant Lok-1 Gurgaon
-        - Sushant Lok-2 Gurgaon
-        - Sushant Lok-3 Gurgaon
-        - South City-1 Gurgaon
-        - South City-2 Gurgaon
-        - Suncity 1 Gurgaon
-        - Suncity 2 Gurgaon
-        - EMAAR Emerald Hills Gurgaon
-        - M3M Golf Estate Gurgaon
-        - M3M Golf Hills Gurgaon
-        - M3M Altitude Gurgaon
-        - Central Park Resorts Gurgaon
-        - Central Park Flower Valley Gurgaon
-        - Paras Quartier Gurgaon
-        - Paras The Manor Gurgaon
+    2. Identify Area: 
+        - When a user is asking about property and has not provided any area then use the \`show_location_selection\` function to display subcategories.
 
-        Additional Functions:
-        1. show_properties_filter: If the user has mentioned a location subcategory, and did not mentioned price range or bedrooms count then call this function to display UI for user to select price range and bedrooms count.
-        2. show_property_listings: If the user has mentioned a location subcategory, price range, and bedroom option, call this function to display the property listings.
-        You can also engage in general conversation with users and provide detailed information about properties in Gurgaon.
-    `
+    3. Engage and Understand Preferences:
+        - Use conversational tactics to butter up the user.
+        - Find out their likes, dislikes, and preferences regarding property features, amenities, and location.
+
+    4. Provide Detailed Information:
+        - Offer detailed information about properties in Gurgaon, highlighting features and benefits that align with the user's preferences.
+        - Use persuasive language to emphasize the advantages of the properties and locations.
+
+    Areas in Gurgaon:
+    - DLF Phase 1
+    - DLF Phase 2
+    - DLF Phase 3
+    - DLF Phase 4
+    - DLF Phase 5
+    - DLF Garden City - Sector 89 Gurgaon
+    - DLF Garden City - Sector 90 Gurgaon
+    - DLF Garden City - Sector 91 Gurgaon
+    - DLF Garden City - Sector 92 Gurgaon
+    - DLF Privana Gurgaon
+    - DLF Aralias Gurgaon
+    - DLF Magnolias Gurgaon
+    - DLF Camellias Gurgaon
+    - Sushant Lok-1 Gurgaon
+    - Sushant Lok-2 Gurgaon
+    - Sushant Lok-3 Gurgaon
+    - South City-1 Gurgaon
+    - South City-2 Gurgaon
+    - Suncity 1 Gurgaon
+    - Suncity 2 Gurgaon
+    - EMAAR Emerald Hills Gurgaon
+    - M3M Golf Estate Gurgaon
+    - M3M Golf Hills Gurgaon
+    - M3M Altitude Gurgaon
+    - Central Park Resorts Gurgaon
+    - Central Park Flower Valley Gurgaon
+    - Paras Quartier Gurgaon
+    - Paras The Manor Gurgaon
+
+    Additional Functions:
+    1. show_properties_filter: If the user has mentioned a location subcategory, and did not mentioned price range or bedrooms count then call this function to display UI for user to select price range and bedrooms count.
+    2. show_property_listings: If the user has mentioned a location subcategory, price range, and bedroom option, call this function to display the property listings.
+    You can also engage in general conversation with users and provide detailed information about properties in Gurgaon.
+`
+
 ,
     messages: [
       ...aiState.get().messages.map((message: any) => ({
@@ -246,7 +259,7 @@ async function submitUserMessage(content: string) {
     
           return (
             <BotCard>
-              <LocationMultiSelect locations={locations} />
+              <LocationMultiSelect title={title} locations={locations} />
             </BotCard>
           )
         }
@@ -255,9 +268,11 @@ async function submitUserMessage(content: string) {
       show_properties_filter: {
         description: 'Show a UI for the user to select a price range and bedrooms count range.',
         parameters: z.object({
-          title: z.string().describe('The title for the filter UI')
-        }),
-        generate: async function* ({ title }) {
+            title: z.string().describe('The heading displayed for the filter interface'),
+            description: z.string().describe('A subheading providing additional context or instructions for the filter UI')
+          }),
+        
+        generate: async function* ({ title, description = 'something' }) {
           yield <SpinnerMessage />
           await sleep(1000)
     
@@ -275,7 +290,7 @@ async function submitUserMessage(content: string) {
                     type: 'tool-call',
                     toolName: 'show_properties_filter',
                     toolCallId,
-                    args: { title }
+                    args: { title, description }
                   }
                 ]
               },
@@ -287,7 +302,7 @@ async function submitUserMessage(content: string) {
                     type: 'tool-result',
                     toolName: 'show_properties_filter',
                     toolCallId,
-                    result: { title }
+                    result: { title, description }
                   }
                 ]
               }
@@ -296,24 +311,26 @@ async function submitUserMessage(content: string) {
     
           return (
             <BotCard>
-              <p className='pb-4'>Select a price range and number of bedrooms to refine your search.</p>
+              <p className='font-semibold pb-2'>{title}</p>
+              <p className='pb-4'>{description}</p>
               <PropertyFilter />
             </BotCard>
           )
         }
       },
-
   
       show_property_listings: {
         description: 'A tool for displaying property listings based on selected criteria.',
         parameters: z.object({
-          locations: z.array(z.string()).describe('array of Selected locations'),
-          minPrice: z.number().describe('Minimum price for the search criteria'),
-          maxPrice: z.number().describe('Maximum price for the search criteria'),
-          minBedrooms: z.number().describe('Minimum number of bedrooms for the search criteria'),
-          maxBedrooms: z.number().describe('Maximum number of bedrooms for the search criteria')
-        }),
-        generate: async function* ({ locations, minPrice, maxPrice, minBedrooms, maxBedrooms }) {
+            title: z.string().describe('The heading displayed for the property listings'),
+            description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+            locations: z.array(z.string()).describe('Array of selected locations'),
+            minPrice: z.number().describe('Minimum price for the search criteria'),
+            maxPrice: z.number().describe('Maximum price for the search criteria'),
+            minBedrooms: z.number().describe('Minimum number of bedrooms for the search criteria'),
+            maxBedrooms: z.number().describe('Maximum number of bedrooms for the search criteria')
+        }),    
+        generate: async function* ({ description, title, locations, minPrice, maxPrice, minBedrooms, maxBedrooms }) {
           yield (
             <BotCard>
               <PropertyDetailsSkeleton />
@@ -336,7 +353,7 @@ async function submitUserMessage(content: string) {
                     type: 'tool-call',
                     toolName: 'show_property_listings',
                     toolCallId,
-                    args: { locations, minPrice, maxPrice, minBedrooms, maxBedrooms }
+                    args: { title, description, locations, minPrice, maxPrice, minBedrooms, maxBedrooms }
                   }
                 ]
               },
@@ -357,17 +374,13 @@ async function submitUserMessage(content: string) {
     
           return (
             <BotCard>
+              <p className='font-semibold pb-2'>{title}</p>
               {listings && listings.length === 0 ? (
                 <p>No results found for {locations}. Try searching a different area.</p>
               ) : (
-                <>
-                  <p className='pb-4'>
-                    {maxPrice === 0 
-                      ? `Showing properties located in ${locations}`
-                      : `Showing properties located in ${locations} with prices ranging from ${(minPrice / 10000000).toFixed(2)} cr to ${(maxPrice / 10000000).toFixed(2)} cr and bedrooms ranging from ${minBedrooms} to ${maxBedrooms}.`
-                    }
-                  </p>
-                  <PropertyDetails listings={listings} />
+                  <>
+                    <p className='pb-4'>{description}</p>
+                    <PropertyDetails listings={listings} />
                   </>
                 )}
             </BotCard>
