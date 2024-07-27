@@ -29,9 +29,10 @@ async function UserOrLogin() {
           <SidebarToggle />
         </>
       ) : (
-        <Link href="https://www.bionicdiamond.com/" rel="nofollow">
-          <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
-        </Link>
+        // <Link href="https://www.bionicdiamond.com/" rel="nofollow">
+        //   {/*<img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />*/}
+        // </Link>
+          <p></p>
       )}
       <div className="flex items-center">
         <IconSeparator className="size-6 text-zinc-200" />

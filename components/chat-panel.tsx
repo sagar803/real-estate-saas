@@ -42,17 +42,17 @@ export function ChatPanel({
 
     const exampleMessages = [
         {
-            heading: 'Impact of artificial intelligence on higher education',
+            heading: 'Search for suitable properties',
             subheading: '',
             message: ``
         },
         {
-            heading: 'Canadian demographics consuming digital media',
+            heading: 'Let the AI take care of it for you',
             subheading: '',
             message: ''
         },
         {
-            heading: 'New marketing segments from immigrants to Canada',
+            heading: 'Fully adapted to your needs',
             subheading: '',
             message: ''
         }
@@ -73,9 +73,9 @@ export function ChatPanel({
             />
 
             <div className="mx-auto sm:max-w-2xl sm:px-4">
-                {showContent && (
-                    <img className="size-10 object-contain ml-auto mr-auto mb-10" src="/images/gemini.png" alt="gemini logo" />
-                )}
+                {/*{showContent && (*/}
+                {/*    // <img className="size-10 object-contain ml-auto mr-auto mb-10" src="/images/gemini.png" alt="gemini logo" />*/}
+                {/*)}*/}
                 {messages.length === 0 && showContent && (
                     <div className="mb-24 grid sm:grid-cols-3 gap-2 sm:gap-4 px-4 sm:px-0">
                         {exampleMessages.map((example, index) => (
