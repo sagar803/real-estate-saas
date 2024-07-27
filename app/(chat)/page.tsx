@@ -7,7 +7,7 @@ import { getMissingKeys } from '../actions'
 import { ModelProvider } from '../context/ModelContext'
 
 export const metadata = {
-  title: 'Diamond AI Chatbot'
+  title: 'Proper AI'
 }
 
 export default async function IndexPage() {
