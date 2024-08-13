@@ -61,18 +61,25 @@ async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms,
     ['Sushant Lok-3 Gurgaon', 16],    
     ['South City-1 Gurgaon', 17],
     ['South City-2 Gurgaon', 18],
-    ['Suncity 1 Gurgaon', 19],
-    ['Suncity 2 Gurgaon', 20],
-    ['M3M Golf Estate Gurgaon', 22],
-    ['M3M Golf Hills Gurgaon', 23],
-    ['Central Park Resorts Gurgaon', 25],
-    ['Central Park Flower Valley Gurgaon', 26],
-    ['Paras Quartier Gurgaon', 27],
+    ['Suncity Gurgaon', 19],
+    ['Central Park Resorts Gurgaon', 20],
+    ['Central Park Flower Valley Gurgaon', 21],
+    ['Paras Quartier Gurgaon', 22],
+    ['M3M Golf Estate Gurgaon', 23],
+    ['M3M Golf Hills Gurgaon', 24],
+    ['M3M Latitude Gurgaon', 25],
+    ['EMAAR Emerald Hills Gurgaon', 26],    
     
-    ['Paras The Manor Gurgaon', 28],
-    ['EMAAR Emerald Hills Gurgaon', 21],    
-    ['M3M Altitude Gurgaon', 24],
+    // ['Paras The Manor Gurgaon', --],
+
   ]);
+
+
+
+
+
+
+
   
   const areaIds = locations?.map(location => areaIdMap.get(location)).filter(id => id !== undefined);
 
@@ -221,8 +228,7 @@ Key Areas in Gurgaon
     - Sushant Lok-3 Gurgaon
     - South City-1 Gurgaon
     - South City-2 Gurgaon
-    - Suncity 1 Gurgaon
-    - Suncity 2 Gurgaon
+    - Suncity Gurgaon
     - EMAAR Emerald Hills Gurgaon
     - M3M Golf Estate Gurgaon
     - M3M Golf Hills Gurgaon
@@ -230,7 +236,6 @@ Key Areas in Gurgaon
     - Central Park Resorts Gurgaon
     - Central Park Flower Valley Gurgaon
     - Paras Quartier Gurgaon
-    - Paras The Manor Gurgaon
 Tips for Human-Like Interaction
 
 Adjust your humor and sarcasm level based on the user's responses.

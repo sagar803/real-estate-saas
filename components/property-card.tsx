@@ -10,6 +10,7 @@ import { StarFilledIcon } from '@radix-ui/react-icons';
 
 const PropertyCard = ({listing, idx}) => {
 
+  console.log(listing)
     let isImagesInfinite = listing.images.length > 1;
     let isFeatureInfinite = listing.features.length > 1;
 
@@ -51,8 +52,6 @@ const PropertyCard = ({listing, idx}) => {
         features
     } = listing;
 
-    const limitedImages = images.slice(0, 2);
-
     return (
         <div key={idx} className="mb-2 p-4 border rounded-lg shadow-lg">
           <div>
@@ -61,9 +60,9 @@ const PropertyCard = ({listing, idx}) => {
           </div>
           <div className="py-4 scale-105">
             {
-                limitedImages && limitedImages.length > 0 ? (
+                images && images.length > 0 ? (
                     <Slider {...imageSettings}>
-                      {limitedImages.map((image, index) => (
+                      {images.map((image, index) => (
                           <img key={index} src={image} alt={`Property ${index + 1}`} className="px-1 rounded-lg w-full h-44 object-cover" />
                       ))}
                     </Slider>
