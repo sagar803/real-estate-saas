@@ -39,7 +39,7 @@ const ContactForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl">
+    <Card className="w-full h-full max-w-2xl">
       <CardHeader>
         <CardTitle className="text-2xl font-semibold text-center">Contact Us</CardTitle>
       </CardHeader>
@@ -93,7 +93,7 @@ const ContactForm = () => {
               name="message"
               value={formData.message}
               onChange={handleChange}
-              className="w-full h-32" 
+              className="w-full h-28 max-h-32" 
               required 
             />
           </div>

@@ -136,9 +136,9 @@ const ParasManorPropertyDetails = () => {
   
 
   return (
-    <Card className="w-full max-w-2xl shadow-none border-none p-0">
+    <Card className="w-full max-w-2xl shadow-none border-none p-0 h-full">
       <CardContent className="p-2 ps-0">
-        <div className="min-h-[400px] flex flex-col sm:flex-row">
+        <div className="min-h-[410px] flex flex-col sm:flex-row">
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
@@ -165,12 +165,12 @@ const ParasManorPropertyDetails = () => {
               ))}
             </TabsList>
           </Tabs>
-          <div className="transition-transform mt-4 sm:mt-0 sm:ml-6 sm:flex-grow">
+          <div className="min-h-[400px] transition-transform mt-4 sm:mt-0 sm:ml-6 sm:flex-grow">
             {activeTab === "home" && <HomeContent />}
             {activeTab === "video" && <ParasManorVideosCarousel />}
             {activeTab === "images" && <ParasManorImageCarousel />}
-            {activeTab === "aboutus" && <About />}
             {activeTab === "floorplan" && <ParasManorFloorCarousel />}
+            {activeTab === "aboutus" && <About />}
             {activeTab === "contact" && <ContactForm />}
           </div>
         </div>

@@ -60,7 +60,7 @@ const ParasManorVideosCarousel = () => {
   }, [currentSlide, inView])
 
   return (
-    <div ref={containerRef} className="w-full max-w-2xl mx-auto space-y-6">
+    <div ref={containerRef} className="w-full h-full max-w-2xl mx-auto space-y-6">
       <Card className='border-none shadow-none'>
         <CardContent className="p-1">
           <Carousel 

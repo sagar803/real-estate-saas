@@ -13,7 +13,7 @@ const ParasManorImageGallery = () => {
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
       <ParasManorImageCarousel />
-      <div className='flex gap-2 pt-2'>
+      <div className='flex flex-col sm:flex-row gap-2 pt-2'>
         <ParasManorVideoButton />
         <ParasManorDetailsButton />
       </div>

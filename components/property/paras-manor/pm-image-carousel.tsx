@@ -22,7 +22,7 @@ const ParasManorImageCarousel = () => {
   );
 
   return (
-    <div className= "w-full max-w-2xl mx-auto">
+    <div className= "w-full max-w-2xl mx-auto h-full">
       <Card className='border-none shadow-none'>
         <CardContent className="p-1">
           <Carousel className="w-full">
