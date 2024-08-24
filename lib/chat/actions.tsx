@@ -10,7 +10,6 @@ import {
   createStreamableValue
 } from 'ai/rsc'
 import { openai } from '@ai-sdk/openai'
-import { DOMParser } from '@xmldom/xmldom'
 
 import {
   spinner,
@@ -39,6 +38,10 @@ import { supabase } from '../../lib/supabaseClient';
 import { PropertyFilter } from '@/components/property/filter'
 import { Skeleton } from '@/components/ui/skeleton'
 import PropertyDetailsSkeleton from '@/components/property/property-card-skeleton'
+import ParasManorVideos from '@/components/property/paras-manor-video'
+import { title } from 'process'
+import ParasManorImageGallery from '@/components/property/paras-manor-image-gallery'
+import ParasManorPropertyDetails from '@/components/property/paras-manor-property-listing'
 
 async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms) {
 
@@ -72,15 +75,7 @@ async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms,
     
     // ['Paras The Manor Gurgaon', --],
 
-  ]);
-
-
-
-
-
-
-
-  
+  ]);  
   const areaIds = locations?.map(location => areaIdMap.get(location)).filter(id => id !== undefined);
 
   // console.log(location, minPrice, maxPrice, minBedrooms, maxBedrooms, areaIds)
@@ -403,7 +398,74 @@ Remember, your primary goal is to assist users in finding their ideal property i
           );
 
         }
-      }
+      },
+      show_paras_manor_video: {
+        description: 'A tool for displaying Video of paras manor properties',
+        parameters: z.object({
+            title: z.string().describe('The heading displayed for displaying Video of parasmanor properties'),
+            description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+        }),    
+        generate: async function* ({title, description}) {
+          yield (
+            <BotCard>
+              <SpinnerMessage />
+            </BotCard>
+          )
+          await sleep(1000)
+          return (
+            <BotCard>
+              <p className='font-semibold pb-2'>{title}</p>
+              <p className='pb-4'>{description}</p>
+              <ParasManorVideos />
+            </BotCard>
+          );
+        }
+      },
+      show_paras_manor_image_gallery: {
+        description: 'A tool for displaying an Image Gallery of Paras Manor properties',
+        parameters: z.object({
+          title: z.string().describe('The heading displayed for the Image Gallery of Paras Manor properties'),
+          description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+        }),
+        generate: async function* ({title, description}) {
+          yield (
+            <BotCard>
+              <SpinnerMessage />
+            </BotCard>
+          )
+          await sleep(1000)
+          return (
+            <BotCard>
+              <p className='font-semibold pb-2'>{title}</p>
+              <p className='pb-4'>{description}</p>
+              <ParasManorImageGallery />
+            </BotCard>
+          );
+        }
+      },
+      show_paras_manor_property: {
+        description: 'A tool for displaying UI for paras manor property details etc',
+        parameters: z.object({
+            title: z.string().describe('The heading displayed for displaying paras manor properties'),
+            description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+        }),    
+        generate: async function* ({title, description}) {
+          yield (
+            <BotCard>
+              <SpinnerMessage />
+            </BotCard>
+          )
+          await sleep(1000)
+          return (
+            <BotCard>
+              <p className='font-semibold pb-2'>{title}</p>
+              <p className='pb-4'>{description}</p>
+              <ParasManorPropertyDetails />
+            </BotCard>
+          );
+        }
+      },
+
     }
   })
 

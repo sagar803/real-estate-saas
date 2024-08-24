@@ -45,7 +45,7 @@ export function BotMessage({
 }) {
     const text = useStreamableText(content)
     return (
-        <div className={cn('group relative flex items-start md:-ml-12', className)}>
+        <div className={cn('group relative flex items-start', className)}>
             <div
                 className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
                 <Home className = "size-4 text-foreground" />
@@ -106,7 +106,7 @@ export function ToolImages({content, className}:
     const text = useStreamableText(content)
 
   return (
-    <div className={cn('group relative flex items-start md:-ml-12', className)}>
+    <div className={cn('group relative flex items-start', className)}>
       <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
         <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
       </div>
@@ -178,7 +178,7 @@ export function ToolMessage({
   
 
   return (
-    <div className={cn('group relative flex items-start md:-ml-12', className)}>
+    <div className={cn('group relative flex items-start', className)}>
       <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
         <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
       </div>
@@ -277,14 +277,14 @@ export function BotCard({
   showAvatar?: boolean
 }) {
   return (
-    <div className="group relative flex items-start md:-ml-12">
+    <div className="group relative flex items-start">
       <div
         className={cn(
           'bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm',
           !showAvatar && 'invisible'
         )}
       >
-        <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
+        <Home className = "size-4 text-foreground" />
       </div>
       <div className="ml-4 flex-1 pl-2">{children}</div>
     </div>
@@ -315,7 +315,7 @@ export function ArxivToolMessage({
   const text = useStreamableText(content)
 
   return (
-    <div className={cn('group relative flex items-start md:-ml-12', className)}>
+    <div className={cn('group relative flex items-start', className)}>
       <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
         <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
       </div>
@@ -389,7 +389,7 @@ export function ArxivToolMessage({
 //Tool loading components
 export function SpinnerMessage() {
   return (
-    <div className="group relative flex items-start md:-ml-12">
+    <div className="group relative flex items-start">
       <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
         <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
       </div>
@@ -403,7 +403,7 @@ export function SpinnerMessage() {
 interface ToolLoadingAnimateProps extends React.PropsWithChildren<{}> {searchQuery?: string;}
 export function ToolLoadingAnimate({ children, searchQuery }: ToolLoadingAnimateProps) {
   return (
-    <div className={cn('group relative flex items-start md:-ml-12')}>
+    <div className={cn('group relative flex items-start')}>
       <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
         <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
       </div>
@@ -416,7 +416,7 @@ export function ToolLoadingAnimate({ children, searchQuery }: ToolLoadingAnimate
 
 export function ToolCallLoading({concisedQuery} : {concisedQuery: String}) {
   return (
-    <div className={cn('group relative flex items-start md:-ml-12')}>
+    <div className={cn('group relative flex items-start')}>
       <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
         <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
       </div>
@@ -429,7 +429,7 @@ export function ToolCallLoading({concisedQuery} : {concisedQuery: String}) {
 
 export function ToolImageLoading() {
   return (
-    <div className={cn('group relative flex items-start md:-ml-12')}>
+    <div className={cn('group relative flex items-start')}>
       <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
         <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
       </div>
@@ -456,7 +456,7 @@ export function ToolMessage({
   const text = useStreamableText(content)
 
   return (
-    <div className={cn('group relative flex items-start md:-ml-12', className)}>
+    <div className={cn('group relative flex items-start', className)}>
       <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
         <img className="size-6 object-contain" src="/images/gemini.png" alt="gemini logo" />
       </div>

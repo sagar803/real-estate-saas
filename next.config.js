@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   images: {
+    domains: ['www.themanorparas.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -15,6 +16,6 @@ module.exports = {
     // Dangerously allow production builds to successfully complete even if
     // your project has type errors.
     // !! WARN !!
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: true
   }
 }

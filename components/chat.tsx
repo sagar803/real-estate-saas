@@ -65,7 +65,7 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
   return (
     <>
       <div
-          className="group w-full overflow-auto pl-0 peer-[[data-state=open]]:lg:pl-[250px] peer-[[data-state=open]]:xl:pl-[300px]"
+          className="group w-full overflow-auto"
           ref={scrollRef}
       >
         <div
@@ -87,7 +87,7 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
             scrollToBottom={scrollToBottom}
         />
       </div>
-        <Card className={`bg-black fixed right-0 top-0 bottom-0 w-[45%] mt-16 transition ${selectedPdfUrl ? 'block' : 'hidden'}`}>
+        {/* <Card className={`bg-black fixed right-0 top-0 bottom-0 w-[45%] mt-16 transition ${selectedPdfUrl ? 'block' : 'hidden'}`}>
           <div className='flex justify-end '>
               <X 
                   className='text-white m-4 cursor-pointer rounded-full border-2 border-gray-200' 
@@ -103,7 +103,7 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
               width="100%"
               height="100%"
           ></embed>
-      </Card>
+      </Card> */}
     </>
   )
 }
