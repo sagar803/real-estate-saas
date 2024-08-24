@@ -342,11 +342,7 @@ Remember, your primary goal is to assist users in finding their ideal property i
             maxBedrooms: z.number().describe('Maximum number of bedrooms for the search criteria')
         }),    
         generate: async function* ({ description, title, locations, minPrice, maxPrice, minBedrooms, maxBedrooms }) {
-          yield (
-            <BotCard>
-              <PropertyDetailsSkeleton />
-            </BotCard>
-          )
+          yield <PropertyDetailsSkeleton />
           await sleep(1000)
     
           const listings = await fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms)
@@ -406,11 +402,7 @@ Remember, your primary goal is to assist users in finding their ideal property i
             description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
         }),    
         generate: async function* ({title, description}) {
-          yield (
-            <BotCard>
-              <SpinnerMessage />
-            </BotCard>
-          )
+          yield <SpinnerMessage />
           await sleep(1000)
           return (
             <BotCard>
@@ -428,11 +420,7 @@ Remember, your primary goal is to assist users in finding their ideal property i
           description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
         }),
         generate: async function* ({title, description}) {
-          yield (
-            <BotCard>
-              <SpinnerMessage />
-            </BotCard>
-          )
+          yield <SpinnerMessage />
           await sleep(1000)
           return (
             <BotCard>
@@ -450,11 +438,7 @@ Remember, your primary goal is to assist users in finding their ideal property i
             description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
         }),    
         generate: async function* ({title, description}) {
-          yield (
-            <BotCard>
-              <SpinnerMessage />
-            </BotCard>
-          )
+          yield <SpinnerMessage />
           await sleep(1000)
           return (
             <BotCard>

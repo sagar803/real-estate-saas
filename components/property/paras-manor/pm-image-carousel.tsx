@@ -22,7 +22,7 @@ const ParasManorImageCarousel = () => {
   );
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className= "w-full max-w-2xl mx-auto">
       <Card className='border-none shadow-none'>
         <CardContent className="p-1">
           <Carousel className="w-full">
@@ -34,7 +34,6 @@ const ParasManorImageCarousel = () => {
                       alt={`Paras Manor Gallery Image ${index + 1}`} 
                       width={600}
                       height={300}
-                      layout="responsive"
                       className="rounded-lg object-cover" 
                       priority={index === 0}
                       loading={index === 0 ? "eager" : "lazy"}

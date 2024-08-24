@@ -85,9 +85,9 @@ const ParasManorPropertyDetails = () => {
       );
   };
   const HomeContent = () => (
-        <div className="h-full flex gap-4 bg-white rounded-lg">
+        <div className="h-full flex flex-col sm:flex-row gap-4 bg-white rounded-lg">
             {/* Left Card */}
-            <div className="w-[60%] pb-2 shadow-lg rounded-lg">
+            <div className="w-full sm:w-[60%] pb-2 shadow-lg rounded-lg">
                 <div className="relative mb-2">
                     <img src="https://www.themanorparas.com/assets/img/gallery/gallery-n1.jpg" alt="Property" className="w-full h-48 object-cover rounded-lg" />
                     {/* <span className="absolute top-2 left-2 bg-white text-gray-800 px-2 py-1 rounded-full text-sm">$2,500 / month</span> */}
@@ -113,7 +113,7 @@ const ParasManorPropertyDetails = () => {
             </div>
 
             {/* Right Card */}
-            <div className="w-[40%] px-4 py-2 shadow-lg rounded-lg">
+            <div className="w-full sm:w-[40%] px-4 py-2 shadow-lg rounded-lg">
                 <AmenitiesSection />
                 <h3 className="font-bold mb-2">Open House</h3>
                 <button className="bg-green-500 text-white px-4 py-2 rounded-full w-full">Schedule a Tour</button>
@@ -128,10 +128,10 @@ const ParasManorPropertyDetails = () => {
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            orientation="vertical"
-            className="sm:flex-shrink-0 sm:flex-col sm:space-y-2"
+            // orientation="vertical"
+            // className="sm:flex-shrink-0 sm:flex-col sm:space-y-2"
           >
-            <TabsList className="flex h-full flex-col justify-start space-y-2 rounded-l-lg p-2 bg-white shadow-md">
+            <TabsList className="flex h-full sm:flex-col flex-row justify-start space-y-2 rounded-l-lg p-2 bg-white shadow-md">
               {tabData.map(({ value, icon, label }) => (
                 <HoverCard openDelay={100} closeDelay={100} key={value}>
                   <HoverCardTrigger>
@@ -139,14 +139,14 @@ const ParasManorPropertyDetails = () => {
                       value={value}
                       className={`relative flex items-center justify-center rounded-md px-4 py-3 transition-all ${
                         activeTab === value
-                          ? "bg-white text-primary shadow-sm"
-                          : "text-muted-foreground hover:bg-gray-200 hover:text-primary"
+                          ? "bg-white text-primary border border-gray shadow-sm"
+                          : "text-muted-foreground border border-transparent hover:bg-gray-200 hover:text-primary"
                       }`}
                     >
                       {icon}
                     </TabsTrigger>
                   </HoverCardTrigger>
-                  <HoverCardContent className="absolute left-10 top-[-45px] w-fit bg-gray-800 text-white rounded-md px-2 py-1 text-xs">
+                  <HoverCardContent className="absolute -left-6 sm:left-10 sm:top-[-45px] w-fit bg-gray-800 text-white rounded-md px-2 py-1 text-xs">
                     {label}
                   </HoverCardContent>
                 </HoverCard>
