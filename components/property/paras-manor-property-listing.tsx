@@ -9,6 +9,8 @@ import { LucideDumbbell, Waves, Coffee, Utensils, ChefHat, Scissors, Activity, C
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card';
 import ParasManorVideosCarousel from './paras-manor/pm-video-carousel';
 import ParasManorImageCarousel from './paras-manor/pm-image-carousel';
+import ParasManorFloorCarousel from './paras-manor/pm-floor-plan-carousel';
+import ContactForm from './paras-manor/pm-contact-us';
 
 const ParasManorPropertyDetails = () => {
   const [activeTab, setActiveTab] = useState("home")
@@ -141,13 +143,13 @@ const ParasManorPropertyDetails = () => {
             value={activeTab}
             onValueChange={setActiveTab}
           >
-            <TabsList className="flex h-full sm:flex-col flex-row justify-start space-y-2 rounded-l-lg p-2 bg-white border shadow-md">
+            <TabsList className="flex h-full sm:flex-col flex-row justify-around sm:space-y-2 rounded-l-lg bg-white border shadow-md">
               {tabData.map(({ value, icon, label }) => (
                 <HoverCard openDelay={100} closeDelay={100} key={value}>
                   <HoverCardTrigger>
                     <TabsTrigger
                       value={value}
-                      className={`relative flex items-center justify-center rounded-md px-4 py-3 transition-all ${
+                      className={`relative flex items-center justify-center rounded-md p-4 transition-all ${
                         activeTab === value
                           ? "bg-white text-primary border border-gray shadow-sm"
                           : "text-muted-foreground border border-transparent hover:bg-gray-200 hover:text-primary"
@@ -168,6 +170,8 @@ const ParasManorPropertyDetails = () => {
             {activeTab === "video" && <ParasManorVideosCarousel />}
             {activeTab === "images" && <ParasManorImageCarousel />}
             {activeTab === "aboutus" && <About />}
+            {activeTab === "floorplan" && <ParasManorFloorCarousel />}
+            {activeTab === "contact" && <ContactForm />}
           </div>
         </div>
       </CardContent>

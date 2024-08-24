@@ -58,13 +58,6 @@ export function ChatPanel({
         }
     ]
 
-    React.useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowContent(false)
-        }, 5000) // Content disappears after 5 seconds
-        return () => clearTimeout(timer)
-    }, [])
-
     return (
         <div className={`transition duration-500 ${selectedPdfUrl ? '-translate-x-1/4' : 'translate-x-0'} fixed inset-x-0 bg-white/90 bottom-0 w-full duration-300 ease-in-out peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px] dark:from-10%`}>
             <ButtonScrollToBottom
@@ -73,10 +66,7 @@ export function ChatPanel({
             />
 
             <div className="mx-auto sm:max-w-2xl sm:px-4">
-                {/*{showContent && (*/}
-                {/*    // <img className="size-10 object-contain ml-auto mr-auto mb-10" src="/images/gemini.png" alt="gemini logo" />*/}
-                {/*)}*/}
-                {messages.length === 0 && showContent && (
+                {messages.length === 0 && (
                     <div className="mb-24 grid sm:grid-cols-3 gap-2 sm:gap-4 px-4 sm:px-0">
                         {exampleMessages.map((example, index) => (
                             <div
