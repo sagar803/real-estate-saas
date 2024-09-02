@@ -42,6 +42,7 @@ import ParasManorVideos from '@/components/property/paras-manor-video'
 import { title } from 'process'
 import ParasManorImageGallery from '@/components/property/paras-manor-image-gallery'
 import ParasManorPropertyDetails from '@/components/property/paras-manor-property-listing'
+import { tool } from 'ai'
 
 async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms) {
 
@@ -101,6 +102,36 @@ async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms,
     console.error('Error fetching properties:', error);
     return [];
   }
+}
+
+async function fetchAQIForLocation(location) {
+    try {
+
+        const geoResponse = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${process.env.OPENWEATHER_API_KEY}`);
+        
+        const geoData = await geoResponse.json();
+
+        console.log(geoData.length)
+        const res = [];
+        if (geoData.length > 0) {
+          for(let geo of geoData) {
+            const { lat, lon } = geoData[0];
+    
+            // Use the coordinates to get the AQI
+            const aqiResponse = await fetch(`http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${process.env.OPENWEATHER_API_KEY}`);
+            
+            const aqiData = await aqiResponse.json();
+            res.push(aqiData);
+          }  
+          return res;
+        } else {
+            console.error(`Could not find coordinates for ${location}`);
+            return `Could not find coordinates for ${location}, please mention city name `;
+        }
+    } catch (error) {
+        console.error(`Error fetching AQI for ${location}:`, error.message);
+        return 'error';
+    }
 }
 
 async function submitUserMessage(content: string) {
@@ -448,8 +479,102 @@ Remember, your primary goal is to assist users in finding their ideal property i
           );
         }
       },
+      getAqi: tool({
+        description: 'A tool to fetch Air quality index.',
+        parameters: z.object({ location: z.string().describe('Determine the city for which the AQI is to be retrieved, ensuring it is only the city name.') }),
+        generate: async function* ({ location }) {
+          yield (
+            <BotCard>
+              <p className='text-md animate-pulse'>Getting AQI for {location}...</p>
+            </BotCard>
+          )
+          await sleep(1000);
+          const toolCallId = nanoid();
+          const aqi = await fetchAQIForLocation(location);
 
-    }
+          aiState.done({
+            ...aiState.get(),
+            messages: [
+              ...aiState.get().messages,
+              {
+                id: nanoid(),
+                role: 'assistant',
+                content: [
+                  {
+                    type: 'tool-call',
+                    toolName: 'getAqi',
+                    toolCallId,
+                    args: { location }
+                  }
+                ]
+              },
+              {
+                id: nanoid(),
+                role: 'tool',
+                content: [
+                  {
+                    type: 'tool-result',
+                    toolName: 'getAqi',
+                    toolCallId,
+                    result: aqi
+                  }
+                ]
+              }
+            ]
+          })
+
+          // // Let's get the text response          
+          const newResult = await streamUI({
+            model: openai('gpt-4o'),
+            initial: (
+              <BotCard>
+                <p className='text-md animate-pulse'>Almost there...</p>
+              </BotCard>
+            ),
+            system: `You are a helpful assistant, extract only relevant information from the given data`,
+            messages: [
+              ...aiState.get().messages
+            ],
+            text: ({ content, done, delta }) => {
+              if (!textStream) {
+                textStream = createStreamableValue('')
+                textNode = <BotMessage content={textStream.value}/>
+              }
+
+              if (done) {
+                textStream.done()
+                aiState.done({
+                  ...aiState.get(),
+                  messages: [
+                    ...aiState.get().messages,
+                    {
+                      id: nanoid(),
+                      role: 'assistant',
+                      content: [
+                        {
+                          type: 'text',
+                          text: content,
+                          toolName: 'getAqi'
+                        }
+                      ]
+                    }
+                  ]
+                })
+              } else {
+                textStream.update(delta)
+              }
+              return textNode
+            }
+          })
+          return (
+            newResult.value
+          )
+        },
+      }),
+
+
+    },
+    
   })
 
   return {

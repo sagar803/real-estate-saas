@@ -13,6 +13,8 @@ import ParasManorFloorCarousel from './paras-manor/pm-floor-plan-carousel';
 import ContactForm from './paras-manor/pm-contact-us';
 
 const ParasManorPropertyDetails = ({activeTabProp = 'home'} : {activeTabProp: string}) => {
+
+  console.log(activeTabProp)
   const [activeTab, setActiveTab] = useState(activeTabProp)
   const tabData = [
     { value: "home", icon: <Home className="size-4 sm:size-5" />, label: "Home" },
