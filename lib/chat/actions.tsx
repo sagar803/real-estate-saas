@@ -225,9 +225,9 @@ Remember, your primary goal is to assist users in finding their ideal property i
     },
     tools: {
       show_location_selection: {
-        description: 'Show a UI for the user to select a location in Gurgaon.',
+        description: 'Show a UI for the user to select form all location in Gurgaon.',
         parameters: z.object({
-          locations: z.array(z.string()).describe('List of locations to choose from'),
+          locations: z.array(z.string()).describe('List of all the locations to choose from in gurgaon'),
           title: z.string().describe('The title for the location selection UI')
         }),
         generate: async function* ({ locations, title }) {
@@ -275,7 +275,6 @@ Remember, your primary goal is to assist users in finding their ideal property i
           )
         }
       },
-
       show_properties_filter: {
         description: 'Show a UI for the user to select a price range and bedrooms count range.',
         parameters: z.object({
@@ -328,8 +327,7 @@ Remember, your primary goal is to assist users in finding their ideal property i
             </BotCard>
           )
         }
-      },
-  
+      },  
       show_property_listings: {
         description: 'A tool for displaying property listings based on selected criteria.',
         parameters: z.object({
@@ -432,19 +430,20 @@ Remember, your primary goal is to assist users in finding their ideal property i
         }
       },
       show_paras_manor_property: {
-        description: 'A tool for displaying UI for paras manor property details etc',
+        description: 'A tool for displaying UI for Paras Manor property details, including floor plans, contact information, photos, videos, and more.',
         parameters: z.object({
             title: z.string().describe('The heading displayed for displaying paras manor properties'),
             description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
-        }),    
-        generate: async function* ({title, description}) {
+            activeTabProp: z.enum(['home', 'video', 'images', 'floorplan', 'contact', 'aboutus']).describe('Identify the active tab for displaying; it could be only any one of the following: home, video, images, floorplan, contact, aboutus to show details'),
+          }),    
+        generate: async function* ({title, description, activeTabProp}) {
           yield <SpinnerMessage />
           await sleep(1000)
           return (
             <BotCard>
               <p className='font-semibold pb-2'>{title}</p>
               <p className='pb-4'>{description}</p>
-              <ParasManorPropertyDetails />
+              <ParasManorPropertyDetails activeTabProp={activeTabProp}/>
             </BotCard>
           );
         }

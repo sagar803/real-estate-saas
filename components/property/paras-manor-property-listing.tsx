@@ -12,17 +12,16 @@ import ParasManorImageCarousel from './paras-manor/pm-image-carousel';
 import ParasManorFloorCarousel from './paras-manor/pm-floor-plan-carousel';
 import ContactForm from './paras-manor/pm-contact-us';
 
-const ParasManorPropertyDetails = () => {
-  const [activeTab, setActiveTab] = useState("home")
+const ParasManorPropertyDetails = ({activeTabProp = 'home'} : {activeTabProp: string}) => {
+  const [activeTab, setActiveTab] = useState(activeTabProp)
   const tabData = [
-    { value: "home", icon: <Home className="h-5 w-5" />, label: "Home" },
-    { value: "video", icon: <Play className="h-5 w-5" />, label: "Video" },
-    { value: "images", icon: <ImageIcon className="h-5 w-5" />, label: "Images" },
-    { value: "floorplan", icon: <Building className="h-5 w-5" />, label: "Floor Plan" },
-    { value: "contact", icon: <PhoneCall className="h-5 w-5" />, label: "Contact Us" },
-    { value: "aboutus", icon: <Handshake className="h-5 w-5" />, label: "About Us" },
+    { value: "home", icon: <Home className="size-4 sm:size-5" />, label: "Home" },
+    { value: "video", icon: <Play className="size-4 sm:size-5" />, label: "Video" },
+    { value: "images", icon: <ImageIcon className="size-4 sm:size-5" />, label: "Images" },
+    { value: "floorplan", icon: <Building className="size-4 sm:size-5" />, label: "Floor Plan" },
+    { value: "contact", icon: <PhoneCall className="size-4 sm:size-5" />, label: "Contact Us" },
+    { value: "aboutus", icon: <Handshake className="size-4 sm:size-5" />, label: "About Us" },
   ]
-
 
   const AmenitiesSection = () => {
       return (
@@ -149,7 +148,7 @@ const ParasManorPropertyDetails = () => {
                   <HoverCardTrigger>
                     <TabsTrigger
                       value={value}
-                      className={`relative flex items-center justify-center rounded-md p-4 transition-all ${
+                      className={`relative flex items-center justify-center rounded-md p-2 sm:p-4 transition-all ${
                         activeTab === value
                           ? "bg-white text-primary border border-gray shadow-sm"
                           : "text-muted-foreground border border-transparent hover:bg-gray-200 hover:text-primary"
