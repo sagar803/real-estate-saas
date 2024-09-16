@@ -366,11 +366,11 @@ async function submitUserMessage(content: string) {
         }
       },
       show_paras_manor_property: {
-        description: 'A tool for displaying UI for Paras Manor property details, including floor plans, contact information, photos, videos, and more.',
+        description: 'A tool for displaying UI for Paras Manor property details, including floor plans, map, contact information, photos, videos, and more.',
         parameters: z.object({
             title: z.string().describe('The heading displayed for displaying paras manor properties'),
             description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
-            activeTabProp: z.enum(['home', 'video', 'images', 'floorplan', 'contact', 'aboutus']).describe('Identify the active tab for displaying; it could be only any one of the following: home, video, images, floorplan, contact, aboutus to show details'),
+            activeTabProp: z.enum(['home', 'video', 'images', 'floorplan', 'contact', 'aboutus', 'map']).describe('Identify the active tab for displaying; it could be only any one of the following: home, video, images, floorplan, contact, aboutus to show details'),
           }),    
         generate: async function* ({title, description, activeTabProp}) {
           yield <SpinnerMessage />

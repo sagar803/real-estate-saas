@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState} from 'react'
-import { DollarSign, Handshake, MapPin, MessageCircle, Phone, PhoneCall, Ruler } from 'lucide-react';
+import { DollarSign, Handshake, Map, MapPin, MessageCircle, Phone, PhoneCall, Ruler } from 'lucide-react';
 import { Home, Play, Image as ImageIcon, } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -11,6 +11,7 @@ import ParasManorVideosCarousel from './paras-manor/pm-video-carousel';
 import ParasManorImageCarousel from './paras-manor/pm-image-carousel';
 import ParasManorFloorCarousel from './paras-manor/pm-floor-plan-carousel';
 import ContactForm from './paras-manor/pm-contact-us';
+import PropertyMap from './map-ui';
 
 const ParasManorPropertyDetails = ({activeTabProp = 'home'} : {activeTabProp: string}) => {
 
@@ -23,6 +24,7 @@ const ParasManorPropertyDetails = ({activeTabProp = 'home'} : {activeTabProp: st
     { value: "floorplan", icon: <Building className="size-4 sm:size-5" />, label: "Floor Plan" },
     { value: "contact", icon: <PhoneCall className="size-4 sm:size-5" />, label: "Contact Us" },
     { value: "aboutus", icon: <Handshake className="size-4 sm:size-5" />, label: "About Us" },
+    { value: "map", icon: <Map className="size-4 sm:size-5" />, label: "map" },
   ]
 
   const AmenitiesSection = () => {
@@ -173,6 +175,7 @@ const ParasManorPropertyDetails = ({activeTabProp = 'home'} : {activeTabProp: st
             {activeTab === "floorplan" && <ParasManorFloorCarousel />}
             {activeTab === "aboutus" && <About />}
             {activeTab === "contact" && <ContactForm />}
+            {activeTab === "map" && <PropertyMap areaId={27}/>}
           </div>
         </div>
       </CardContent>
