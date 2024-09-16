@@ -125,10 +125,7 @@ async function submitUserMessage(content: string) {
   const result = await streamUI({
     model: openai('gpt-4o'),
     initial: <SpinnerMessage />,
-    system: systemInstructions
-
-
-,
+  
     messages: [
       ...aiState.get().messages.map((message: any) => ({
         role: message.role,
