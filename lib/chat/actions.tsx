@@ -27,6 +27,7 @@ import {
   sleep,
   nanoid
 } from '@/lib/utils'
+import {systemInstructions, areaIdMap} from '@/lib/propertyUtils'
 import { saveChat } from '@/app/actions'
 import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
@@ -43,44 +44,11 @@ import { title } from 'process'
 import ParasManorImageGallery from '@/components/property/paras-manor-image-gallery'
 import ParasManorPropertyDetails from '@/components/property/paras-manor-property-listing'
 import { tool } from 'ai'
+import PropertyMap from '@/components/property/map-ui'
 
 async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms) {
 
-  const areaIdMap = new Map([
-    ['DLF Phase 1', 1],
-    ['DLF Phase 2', 2],
-    ['DLF Phase 3', 3],
-    ['DLF Phase 4', 4],
-    ['DLF Phase 5', 5],
-    ['DLF Garden City - Sector 89 Gurgaon', 6],
-    ['DLF Garden City - Sector 90 Gurgaon', 7],
-    ['DLF Garden City - Sector 91 Gurgaon', 8],
-    ['DLF Garden City - Sector 92 Gurgaon', 9],
-    ['DLF Privana Gurgaon', 10],
-    ['DLF Aralias Gurgaon', 11],
-    ['DLF Magnolias Gurgaon', 12],
-    ['DLF Camellias Gurgaon', 13],    
-    ['Sushant Lok-1 Gurgaon', 14],
-    ['Sushant Lok-2 Gurgaon', 15],
-    ['Sushant Lok-3 Gurgaon', 16],    
-    ['South City-1 Gurgaon', 17],
-    ['South City-2 Gurgaon', 18],
-    ['Suncity Gurgaon', 19],
-    ['Central Park Resorts Gurgaon', 20],
-    ['Central Park Flower Valley Gurgaon', 21],
-    ['Paras Quartier Gurgaon', 22],
-    ['M3M Golf Estate Gurgaon', 23],
-    ['M3M Golf Hills Gurgaon', 24],
-    ['M3M Latitude Gurgaon', 25],
-    ['EMAAR Emerald Hills Gurgaon', 26],    
-    
-    // ['Paras The Manor Gurgaon', --],
-
-  ]);  
   const areaIds = locations?.map(location => areaIdMap.get(location)).filter(id => id !== undefined);
-
-  // console.log(location, minPrice, maxPrice, minBedrooms, maxBedrooms, areaIds)
-
   const queryParams = new URLSearchParams({
     min_price: minPrice,
     max_price: maxPrice,
@@ -157,68 +125,7 @@ async function submitUserMessage(content: string) {
   const result = await streamUI({
     model: openai('gpt-4o'),
     initial: <SpinnerMessage />,
-    system: `\
-    You are 'Proper', a property listing assistant specializing in Gurgaon real estate. Your goal is to help users find their ideal property in Gurgaon, adapting your communication style to their preferences.
-
-Key Points:
-- Be flexible in your approach, able to be direct or more conversational based on user cues.
-- Introduce yourself briefly as a Gurgaon real estate expert.
-- Focus on understanding the user's property requirements efficiently.
-- Provide information about Gurgaon and its properties tailored to the user's needs.
-- Use humor and local knowledge when appropriate, but don't force it.
-- Utilize the provided functions (show_location_selection, show_properties_filter, show_property_listings) as needed.
-- Be knowledgeable about key areas in Gurgaon.
-- If asked about your origin, state you were trained by OddlyAI.
-
-Interaction Approach:
-1. Start with a brief, professional greeting.
-2. Quickly gauge the user's preferred communication style and adapt accordingly.
-3. If the user seems open to conversation, engage in light chitchat about their background and needs. If not, move directly to understanding their property requirements.
-4. Provide relevant information about Gurgaon and its properties, tailored to the user's interests.
-5. Guide the property search efficiently, using the provided functions as necessary.
-6. Be prepared to answer questions about specific areas or properties in Gurgaon.
-7. Maintain a helpful and knowledgeable demeanor throughout the interaction.
-
-Gurgaon Information:
-- Highlight Gurgaon's advantages relevant to the user's needs.
-- Share facts or "local secrets" about Gurgaon if the user shows interest.
-- Describe the Gurgaon lifestyle in relation to the user's preferences.
-- Showcase relevant areas from the provided list based on user requirements.
-
-Property Search:
-- Focus on understanding specific property needs.
-- Use the provided functions to assist in the search process.
-- Be ready to explain or elaborate on property details as needed.
-
-Key Areas in Gurgaon:
-- DLF Phase 1
-- DLF Phase 2
-- DLF Phase 3
-- DLF Phase 4
-- DLF Phase 5
-- DLF Garden City - Sector 89 Gurgaon
-- DLF Garden City - Sector 90 Gurgaon
-- DLF Garden City - Sector 91 Gurgaon
-- DLF Garden City - Sector 92 Gurgaon
-- DLF Privana Gurgaon
-- DLF Aralias Gurgaon
-- DLF Magnolias Gurgaon
-- DLF Camellias Gurgaon
-- Sushant Lok-1 Gurgaon
-- Sushant Lok-2 Gurgaon
-- Sushant Lok-3 Gurgaon
-- South City-1 Gurgaon
-- South City-2 Gurgaon
-- Suncity Gurgaon
-- EMAAR Emerald Hills Gurgaon
-- M3M Golf Estate Gurgaon
-- M3M Golf Hills Gurgaon
-- M3M Altitude Gurgaon
-- Central Park Resorts Gurgaon
-- Central Park Flower Valley Gurgaon
-- Paras Quartier Gurgaon
-
-Remember, your primary goal is to assist users in finding their ideal property in Gurgaon. Be responsive to their communication style and needs, whether they prefer a direct, business-like approach or a more conversational interaction.`
+    system: systemInstructions
 
 
 ,
@@ -255,175 +162,175 @@ Remember, your primary goal is to assist users in finding their ideal property i
       return textNode
     },
     tools: {
-      show_location_selection: {
-        description: 'Show a UI for the user to select form all location in Gurgaon.',
-        parameters: z.object({
-          locations: z.array(z.string()).describe('List of all the locations to choose from in gurgaon'),
-          title: z.string().describe('The title for the location selection UI')
-        }),
-        generate: async function* ({ locations, title }) {
-          yield <SpinnerMessage />
+      // show_location_selection: {
+      //   description: 'Show a UI for the user to select form all location in Gurgaon.',
+      //   parameters: z.object({
+      //     locations: z.array(z.string()).describe('List of all the locations to choose from in gurgaon'),
+      //     title: z.string().describe('The title for the location selection UI')
+      //   }),
+      //   generate: async function* ({ locations, title }) {
+      //     yield <SpinnerMessage />
     
-          await sleep(1000)
+      //     await sleep(1000)
     
-          const toolCallId = nanoid()
+      //     const toolCallId = nanoid()
     
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: [
-                  {
-                    type: 'tool-call',
-                    toolName: 'show_location_selection',
-                    toolCallId,
-                    args: { locations, title }
-                  }
-                ]
-              },
-              {
-                id: nanoid(),
-                role: 'tool',
-                content: [
-                  {
-                    type: 'tool-result',
-                    toolName: 'show_location_selection',
-                    toolCallId,
-                    result: { locations, title }
-                  }
-                ]
-              }
-            ]
-          })
+      //     aiState.done({
+      //       ...aiState.get(),
+      //       messages: [
+      //         ...aiState.get().messages,
+      //         {
+      //           id: nanoid(),
+      //           role: 'assistant',
+      //           content: [
+      //             {
+      //               type: 'tool-call',
+      //               toolName: 'show_location_selection',
+      //               toolCallId,
+      //               args: { locations, title }
+      //             }
+      //           ]
+      //         },
+      //         {
+      //           id: nanoid(),
+      //           role: 'tool',
+      //           content: [
+      //             {
+      //               type: 'tool-result',
+      //               toolName: 'show_location_selection',
+      //               toolCallId,
+      //               result: { locations, title }
+      //             }
+      //           ]
+      //         }
+      //       ]
+      //     })
     
-          return (
-            <BotCard>
-              <LocationMultiSelect title={title} locations={locations} />
-            </BotCard>
-          )
-        }
-      },
-      show_properties_filter: {
-        description: 'Show a UI for the user to select a price range and bedrooms count range.',
-        parameters: z.object({
-            title: z.string().describe('The heading displayed for the filter interface'),
-            description: z.string().describe('A subheading providing additional context or instructions for the filter UI')
-          }),
+      //     return (
+      //       <BotCard>
+      //         <LocationMultiSelect title={title} locations={locations} />
+      //       </BotCard>
+      //     )
+      //   }
+      // },
+      // show_properties_filter: {
+      //   description: 'Show a UI for the user to select a price range and bedrooms count range.',
+      //   parameters: z.object({
+      //       title: z.string().describe('The heading displayed for the filter interface'),
+      //       description: z.string().describe('A subheading providing additional context or instructions for the filter UI')
+      //     }),
         
-        generate: async function* ({ title, description = 'something' }) {
-          yield <SpinnerMessage />
-          await sleep(1000)
+      //   generate: async function* ({ title, description = 'something' }) {
+      //     yield <SpinnerMessage />
+      //     await sleep(1000)
     
-          const toolCallId = nanoid()
+      //     const toolCallId = nanoid()
     
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: [
-                  {
-                    type: 'tool-call',
-                    toolName: 'show_properties_filter',
-                    toolCallId,
-                    args: { title, description }
-                  }
-                ]
-              },
-              {
-                id: nanoid(),
-                role: 'tool',
-                content: [
-                  {
-                    type: 'tool-result',
-                    toolName: 'show_properties_filter',
-                    toolCallId,
-                    result: { title, description }
-                  }
-                ]
-              }
-            ]
-          })
+      //     aiState.done({
+      //       ...aiState.get(),
+      //       messages: [
+      //         ...aiState.get().messages,
+      //         {
+      //           id: nanoid(),
+      //           role: 'assistant',
+      //           content: [
+      //             {
+      //               type: 'tool-call',
+      //               toolName: 'show_properties_filter',
+      //               toolCallId,
+      //               args: { title, description }
+      //             }
+      //           ]
+      //         },
+      //         {
+      //           id: nanoid(),
+      //           role: 'tool',
+      //           content: [
+      //             {
+      //               type: 'tool-result',
+      //               toolName: 'show_properties_filter',
+      //               toolCallId,
+      //               result: { title, description }
+      //             }
+      //           ]
+      //         }
+      //       ]
+      //     })
     
-          return (
-            <BotCard>
-              <p className='font-semibold pb-2'>{title}</p>
-              <p className='pb-4'>{description}</p>
-              <PropertyFilter />
-            </BotCard>
-          )
-        }
-      },  
-      show_property_listings: {
-        description: 'A tool for displaying property listings based on selected criteria.',
-        parameters: z.object({
-            title: z.string().describe('The heading displayed for the property listings'),
-            description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
-            locations: z.array(z.string()).describe('Array of selected locations'),
-            minPrice: z.number().describe('Minimum price for the search criteria'),
-            maxPrice: z.number().describe('Maximum price for the search criteria'),
-            minBedrooms: z.number().describe('Minimum number of bedrooms for the search criteria'),
-            maxBedrooms: z.number().describe('Maximum number of bedrooms for the search criteria')
-        }),    
-        generate: async function* ({ description, title, locations, minPrice, maxPrice, minBedrooms, maxBedrooms }) {
-          yield <PropertyDetailsSkeleton />
-          await sleep(1000)
+      //     return (
+      //       <BotCard>
+      //         <p className='font-semibold pb-2'>{title}</p>
+      //         <p className='pb-4'>{description}</p>
+      //         <PropertyFilter />
+      //       </BotCard>
+      //     )
+      //   }
+      // },  
+      // show_property_listings: {
+      //   description: 'A tool for displaying property listings based on selected criteria.',
+      //   parameters: z.object({
+      //       title: z.string().describe('The heading displayed for the property listings'),
+      //       description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+      //       locations: z.array(z.string()).describe('Array of selected locations'),
+      //       minPrice: z.number().describe('Minimum price for the search criteria'),
+      //       maxPrice: z.number().describe('Maximum price for the search criteria'),
+      //       minBedrooms: z.number().describe('Minimum number of bedrooms for the search criteria'),
+      //       maxBedrooms: z.number().describe('Maximum number of bedrooms for the search criteria')
+      //   }),    
+      //   generate: async function* ({ description, title, locations, minPrice, maxPrice, minBedrooms, maxBedrooms }) {
+      //     yield <PropertyDetailsSkeleton />
+      //     await sleep(1000)
     
-          const listings = await fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms)
-          const toolCallId = nanoid()
+      //     const listings = await fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms)
+      //     const toolCallId = nanoid()
     
-          aiState.done({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: nanoid(),
-                role: 'assistant',
-                content: [
-                  {
-                    type: 'tool-call',
-                    toolName: 'show_property_listings',
-                    toolCallId,
-                    args: { title, description, locations, minPrice, maxPrice, minBedrooms, maxBedrooms }
-                  }
-                ]
-              },
-              {
-                id: nanoid(),
-                role: 'tool',
-                content: [
-                  {
-                    type: 'tool-result',
-                    toolName: 'show_property_listings',
-                    toolCallId,
-                    result: listings
-                  }
-                ]
-              }
-            ]
-          })
+      //     aiState.done({
+      //       ...aiState.get(),
+      //       messages: [
+      //         ...aiState.get().messages,
+      //         {
+      //           id: nanoid(),
+      //           role: 'assistant',
+      //           content: [
+      //             {
+      //               type: 'tool-call',
+      //               toolName: 'show_property_listings',
+      //               toolCallId,
+      //               args: { title, description, locations, minPrice, maxPrice, minBedrooms, maxBedrooms }
+      //             }
+      //           ]
+      //         },
+      //         {
+      //           id: nanoid(),
+      //           role: 'tool',
+      //           content: [
+      //             {
+      //               type: 'tool-result',
+      //               toolName: 'show_property_listings',
+      //               toolCallId,
+      //               result: listings
+      //             }
+      //           ]
+      //         }
+      //       ]
+      //     })
     
-          return (
-            <BotCard>
-              <p className='font-semibold pb-2'>{title}</p>
-              {listings && listings.length === 0 ? (
-                <p>No results found for {locations}. Try searching a different area.</p>
-              ) : (
-                  <>
-                    <p className='pb-4'>{description}</p>
-                    <PropertyDetails listings={listings} />
-                  </>
-                )}
-            </BotCard>
-          );
+      //     return (
+      //       <BotCard>
+      //         <p className='font-semibold pb-2'>{title}</p>
+      //         {listings && listings.length === 0 ? (
+      //           <p>No results found for {locations}. Try searching a different area.</p>
+      //         ) : (
+      //             <>
+      //               <p className='pb-4'>{description}</p>
+      //               <PropertyDetails listings={listings} />
+      //             </>
+      //           )}
+      //       </BotCard>
+      //     );
 
-        }
-      },
+      //   }
+      // },
       show_paras_manor_video: {
         description: 'A tool for displaying Video of paras manor properties',
         parameters: z.object({
@@ -572,9 +479,33 @@ Remember, your primary goal is to assist users in finding their ideal property i
         },
       }),
 
-
-    },
-    
+      // show_property_map: {
+      //   description: 'A tool for displaying UI for property map and location information',
+      //   parameters: z.object({
+      //       title: z.string().describe('The heading displayed for displaying paras manor properties'),
+      //       description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+      //       propertyName : z.string().describe('The name of the property for which the user is asking location information or map, the name should exactly match any name from the key Areas in Gurgaon'),
+      //     }),    
+      //     generate: async function* ({title, description, propertyName, details}) {
+      //       yield <SpinnerMessage />
+      //       await sleep(1000)
+      //       const areaId = areaIdMap.get(propertyName)
+      //       return (
+      //         <BotCard>
+      //           {!areaId ? (
+      //             <p>{`No location data available for ${propertyName}`}</p>
+      //           ): (
+      //             <>
+      //               <p className='font-semibold pb-2'>{title}</p>
+      //               <p className='pb-4'>{description}</p>
+      //               <PropertyMap areaId={areaId}/>
+      //             </>
+      //           )} 
+      //         </BotCard>
+      //       );
+      //     }
+      // },
+    },    
   })
 
   return {

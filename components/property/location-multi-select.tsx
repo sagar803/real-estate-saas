@@ -26,9 +26,11 @@ export function LocationMultiSelect({ title, locations }: MultiSelectProps) {
     location => !selected.includes(location) && location.toLowerCase().includes(inputValue.toLowerCase())
   );
 
-  const query = `The selected location(s) are ${selected.toString()}, now call the show_price_range_selection function to ask for price range.`;
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    let query;
+    if(selected.includes('Paras The Manor Gurgaon')) query = 'call the show_paras_manor_property function to display ui'
+    else query = `The selected location(s) are ${selected.toString()}, now call the show_price_range_selection function to ask for price range.`;
     const response = await submitUserMessage(query);
     setMessages(currentMessages => [...currentMessages, response]);
   }
