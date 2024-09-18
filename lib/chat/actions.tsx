@@ -43,8 +43,10 @@ import ParasManorVideos from '@/components/property/paras-manor-video'
 import { title } from 'process'
 import ParasManorImageGallery from '@/components/property/paras-manor-image-gallery'
 import ParasManorPropertyDetails from '@/components/property/paras-manor-property-listing'
-import { tool } from 'ai'
+import { generateText, tool } from 'ai'
 import PropertyMap from '@/components/property/map-ui'
+import {droneFootageTranscript, movieTranscript} from '../../transcript.js'
+import VideoChatResponse from '@/components/property/paras-manor/VideoChatResponse'
 
 async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms) {
 
@@ -329,6 +331,39 @@ async function submitUserMessage(content: string) {
 
       //   }
       // },
+      parasManorVideoChat: tool({
+        description: 'A tool to be used if there is any query related to paras manor, asking about the specific visuals or to show any of the visuals ',
+        parameters: z.object({ query: z.string().describe('The query related the video content') }),
+        generate: async function* ({ query }) {          
+          yield <BotCard> <p className='text-md animate-pulse'>Processing Video content...</p> </BotCard>
+          await sleep(1000);
+          const toolCallId = nanoid();          
+
+          try {
+            const { text, finishReason, usage } = await generateText({
+              system: `You are a helpful assistant. Process the user query and create a answer with utilizing the contents along with the timestamp from the videos. if the video is unable to provide answer to the query, then specify the same in the text keep the time be "00:00:00"  
+                     IMPORTANT: Your response must be in valid JSON format with the following structure never return an array:
+                      {
+                        "time": "00:00:00", 
+                        "text": "Response of the user query utilizing the video transcript content" 
+                      }`,
+              model: openai('gpt-4o'),
+              prompt: `query: ${query} Transcript: ${JSON.stringify(movieTranscript)}`
+            });
+
+            console.log(text)
+            let data = text.replace(/```json|```/g, '').trim();
+            const parsedResponse = JSON.parse(data);
+  
+            return <VideoChatResponse content={parsedResponse} />
+          } catch (error) {
+            console.error("An error occurred:", error);
+            return <BotCard>
+              <p>Sorry, an error occurred while generating the response.</p>
+            </BotCard>
+          }
+        },
+      }),
       show_paras_manor_video: {
         description: 'A tool for displaying Video of paras manor properties',
         parameters: z.object({
