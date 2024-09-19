@@ -10,7 +10,7 @@ import { Header } from '@/components/header'
 import { Toaster } from '@/components/ui/sonner'
 import { GlobalStateProvider } from '@/context/GlobalContext'
 
-
+//dep
 export const metadata = {
   title: {
     default: 'Real Estate Mogul',
