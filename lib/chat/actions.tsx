@@ -47,6 +47,7 @@ import { generateText, tool } from 'ai'
 import PropertyMap from '@/components/property/map-ui'
 import {droneFootageTranscript, movieTranscript} from '../../transcript.js'
 import VideoChatResponse from '@/components/property/paras-manor/VideoChatResponse'
+import Report from '@/components/property/report'
 
 async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms) {
 
@@ -511,6 +512,50 @@ async function submitUserMessage(content: string) {
           )
         },
       }),
+      show_engagement_report: {
+        description: 'A tool for generating a detailed report on user engagement during the conversation based on chat history',
+        parameters: z.object({
+          userEngagementPercentage: z.number().describe('Percentage of how engaged the user was during the conversation based on chat history'),
+          botEngagementPercentage: z.number().describe('Percentage of how engaged the bot was during the conversation based on chat history'),
+          likelihoodToBuy: z.string().describe('A string that indicates the likelihood of the user buying the property, e.g., High, Medium, Low based on chat history'),
+          likedFeatures: z.array(z.string()).describe('An array of features the user liked during the conversation based on chat history'),
+          dislikedFeatures: z.array(z.string()).describe('An array of features the user disliked during the conversation based on chat history'),
+          userRequests: z.array(z.string()).describe('An array of things the user requested or asked for during the conversation based on chat history'),
+          totalMessages: z.number().describe('The total number of messages exchanged during the conversation'),
+          chatDuration: z.string().describe('The total duration of the conversation in a human-readable format (e.g., "5 minutes, 23 seconds")'),
+          sentimentScore: z.number().describe('A sentiment analysis score indicating the overall sentiment of the user during the conversation (scale from -1 to 1)'),
+          recommendation: z.string().describe('A short recommendation or follow-up action based on the user\'s conversation, like scheduling a call or sending more property details'),
+          summary: z.string().describe('A brief summary of the user’s engagement and behavior throughout the conversation'),
+          conclusion: z.string().describe('A final conclusion or actionable insight based on the user interaction and chat history')
+        }),
+        generate: async function* ({
+          userEngagementPercentage,
+          botEngagementPercentage,
+          likelihoodToBuy,
+          likedFeatures,
+          dislikedFeatures,
+          userRequests,
+          totalMessages,
+          chatDuration,
+          sentimentScore,
+          recommendation,
+          summary,
+          conclusion
+        }) {
+          yield <SpinnerMessage />
+          await sleep(1000)
+          return (
+            <BotCard>
+              <Report userEngagementPercentage={userEngagementPercentage} botEngagementPercentage={botEngagementPercentage} likelihoodToBuy={likelihoodToBuy} likedFeatures={likedFeatures} dislikedFeatures={dislikedFeatures} userRequests={userRequests} totalMessages={totalMessages} chatDuration={chatDuration} sentimentScore={sentimentScore} recommendation={recommendation} summary={summary} conclusion={conclusion} />
+            </BotCard>
+          );
+        }
+      }
+      
+      
+      
+      
+      
 
       // show_property_map: {
       //   description: 'A tool for displaying UI for property map and location information',
