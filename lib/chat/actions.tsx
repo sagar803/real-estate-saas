@@ -333,7 +333,7 @@ async function submitUserMessage(content: string) {
       //   }
       // },
       parasManorVideoChat: tool({
-        description: 'A tool to be used if there is any query related to paras manor, asking about the specific visuals or to show any of the visuals ',
+        description: 'A tool to be used if there is any query related to paras manor, asking about the specific visuals or to show any of the visuals. like a targeted question, for example about the balcony or pool etc. ',
         parameters: z.object({ query: z.string().describe('The query related the video content') }),
         generate: async function* ({ query }) {          
           yield <BotCard> <p className='text-md animate-pulse'>Processing Video content...</p> </BotCard>
