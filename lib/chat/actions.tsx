@@ -45,6 +45,7 @@ import ParasManorImageGallery from '@/components/property/paras-manor-image-gall
 import ParasManorPropertyDetails from '@/components/property/paras-manor-property-listing'
 import { generateText, tool } from 'ai'
 import PropertyMap from '@/components/property/map-ui'
+import ParasManorReview from '@/components/property/paras-manor/pm-review'
 import {droneFootageTranscript, movieTranscript} from '../../transcript.js'
 import VideoChatResponse from '@/components/property/paras-manor/VideoChatResponse'
 import Report from '@/components/property/report'
@@ -342,12 +343,12 @@ async function submitUserMessage(content: string) {
 
           try {
             const { text, finishReason, usage } = await generateText({
-              system: `You are a helpful assistant. Process the user query and create a answer with utilizing the contents along with the timestamp from the videos. if the video is unable to provide answer to the query, then specify the same in the text keep the time be "00:00:00"  
-                     IMPORTANT: Your response must be in valid JSON format with the following structure never return an array:
+              system: `You are a helpful assistant. Process the user query and create an answer utilizing the contents along with the timestamp from the videos. If the video is unable to provide an answer to the query, respond with a cheerful or humorous message like: "Hmm, sorry! We couldn't find that in the brochure or the video. But hey, let some things be left to be seen and experienced! We will let the user builder know." Always set the time to "00:00:00". 
+                      IMPORTANT: Your response must be in valid JSON format with the following structure, never return an array:
                       {
-                        "time": "00:00:00", 
-                        "text": "Response of the user query utilizing the video transcript content" 
-                      }`,
+                        "time": "00:00:00",
+                        "text": "Response of the user query utilizing the video transcript content"
+                      }`,                      
               model: openai('gpt-4o'),
               prompt: `query: ${query} Transcript: ${JSON.stringify(movieTranscript)}`
             });
@@ -420,6 +421,22 @@ async function submitUserMessage(content: string) {
           );
         }
       },
+      // show_paras_manor_property_review: {
+      //   description: 'A tool for displaying UI for Paras Manor property Review',
+      //   parameters: z.object({
+      //       title: z.string().describe('The heading displayed for displaying paras manor property review'),
+      //   }),    
+      //   generate: async function* ({title}) {
+      //     yield <SpinnerMessage />
+      //     await sleep(1000)
+      //     return (
+      //       <BotCard>
+      //         <p>{title}</p>
+      //         <ParasManorReview />
+      //       </BotCard>
+      //     );
+      //   }
+      // },
       getAqi: tool({
         description: 'A tool to fetch Air quality index.',
         parameters: z.object({ location: z.string().describe('Determine the city for which the AQI is to be retrieved, ensuring it is only the city name.') }),
