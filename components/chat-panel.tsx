@@ -14,7 +14,6 @@ import { nanoid } from 'nanoid'
 import { UserMessage } from './stocks/message'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { useGlobalState } from '@/context/GlobalContext'
 
 export interface ChatPanelProps {
     id?: string
@@ -38,7 +37,6 @@ export function ChatPanel({
     const { submitUserMessage } = useActions()
     const [shareDialogOpen, setShareDialogOpen] = React.useState(false)
     const [showContent, setShowContent] = React.useState(true)
-    const {selectedPdfUrl, setSelectedPdfUrl} = useGlobalState()
 
     const exampleMessages = [
         {
@@ -59,7 +57,7 @@ export function ChatPanel({
     ]
 
     return (
-        <div className={`transition duration-500 ${selectedPdfUrl ? '-translate-x-1/4' : 'translate-x-0'} fixed inset-x-0 bg-white/90 bottom-0 w-full duration-300 ease-in-out peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px] dark:from-10%`}>
+        <div className={`transition fixed inset-x-0 bg-white/90 bottom-0 w-full duration-300 ease-in-out peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px] dark:from-10%`}>
             <ButtonScrollToBottom
                 isAtBottom={isAtBottom}
                 scrollToBottom={scrollToBottom}

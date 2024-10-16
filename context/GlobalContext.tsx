@@ -6,10 +6,10 @@ import React, { createContext, useContext, useState } from 'react';
 const GlobalStateContext = createContext();
 
 export const GlobalStateProvider: React.FC = ({ children }) => {
-  const [selectedPdfUrl, setSelectedPdfUrl] = useState(null);
+  const [chatbotId, setChatbotId] = useState("/");
 
   return (
-    <GlobalStateContext.Provider value={{ selectedPdfUrl, setSelectedPdfUrl }}>
+    <GlobalStateContext.Provider value={{ chatbotId, setChatbotId }}>
       {children}
     </GlobalStateContext.Provider>
   );

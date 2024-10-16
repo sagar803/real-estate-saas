@@ -6,7 +6,6 @@ import { getChat, getMissingKeys } from '@/app/actions'
 import { Chat } from '@/components/chat'
 import { AI } from '@/lib/chat/actions'
 import { Session } from '@/lib/types'
-import {useGlobalState} from "../../../../context/GlobalContext";
 export interface ChatPageProps {
   params: {
     id: string

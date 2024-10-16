@@ -22,6 +22,7 @@ import * as React from 'react'
 import Textarea from 'react-textarea-autosize'
 import { toast } from 'sonner'
 import { UserMessage } from './stocks/message'
+import { useParams } from 'next/navigation'
 
 export function PromptForm({
   input,
@@ -30,6 +31,7 @@ export function PromptForm({
   input: string
   setInput: (value: string) => void
 }) {
+  const { id: route } = useParams()
   const { formRef, onKeyDown } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
   const { submitUserMessage } = useActions()
@@ -255,10 +257,11 @@ export function PromptForm({
 
       const responseMessage = await submitUserMessage(
         value,
-        model,
-        uploadedImages,
-        uploadedPdfFiles,
-        uploadingCSVFiles
+        route
+        // model,
+        // uploadedImages,
+        // uploadedPdfFiles,
+        // uploadingCSVFiles
       )
       console.log(uploadingCSVFiles)
       setUploadedImages([])
