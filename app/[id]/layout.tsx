@@ -24,7 +24,10 @@ export default async function ChatLayout({ children, params }: ChatLayoutProps) 
   }
 
   return (
-    <div className={`flex flex-col min-h-screen ${'bg-'+data?.configuration?.bg_color}`}>
+    <div 
+      className={`flex flex-col min-h-screen`}
+      style={{backgroundColor: data?.configuration?.bg_color}}
+    >
       <Header name={data?.configuration?.app_name}/>
       <main className="flex flex-col flex-1">
         <div className={`relative flex h-[calc(100vh_-_theme(spacing.16))] overflow-hidden`}>
