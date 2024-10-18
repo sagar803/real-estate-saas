@@ -48,7 +48,6 @@ const PropertyCard = ({listing, idx}) => {
         meta,
         images,
         ratings,
-        furnishingDetails,
         features
     } = listing;
 
@@ -74,12 +73,6 @@ const PropertyCard = ({listing, idx}) => {
 
           {/* Meta */}
           <div className="grid grid-cols-1 gap-1 text-sm text-gray-500">
-                {/* {meta.builtUpArea && (
-                    <div className="flex items-center space-x-2">
-                    <Home size={18} className="text-gray-700" />
-                    <p className="text-sm text-gray-700">{meta.builtUpArea}</p>
-                    </div>
-                )} */}
                 {meta.bedrooms && (
                     <div className="flex items-center space-x-2 h-4">
                     <Bed size={16} />

@@ -19,7 +19,7 @@ import {
 } from '@/components/stocks'
 import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { z } from 'zod'
-import { CategoryMultiSelect } from '@/components/category-multi-select'
+import { CategoryMultiSelect } from '@/components/property/category-multi-select'
 import { DateSelect } from '@/components/date-single-select'
 import {
   runAsyncFnWithoutBlocking,
@@ -30,95 +30,44 @@ import {systemInstructions, areaIdMap} from '@/lib/propertyUtils'
 import { saveChat } from '@/app/actions'
 import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
-import { LocationMultiSelect } from '@/components/property/location-multi-select'
-import { PriceRangeSelect } from '@/components/price-range'
-import { BedroomSelect } from '@/components/bedroom-select'
-import PropertyDetails from '@/components/display-property'
 import { supabase } from '../../lib/supabaseClient';
-import { PropertyFilter } from '@/components/property/filter'
+import { title } from 'process'
+import { generateText, tool } from 'ai'
+
 import { Skeleton } from '@/components/ui/skeleton'
 import PropertyDetailsSkeleton from '@/components/property/property-card-skeleton'
 import ParasManorVideos from '@/components/property/paras-manor-video'
-import { title } from 'process'
-import ParasManorImageGallery from '@/components/property/paras-manor-image-gallery'
-import ParasManorPropertyDetails from '@/components/property/paras-manor-property-listing'
-import { generateText, tool } from 'ai'
 import PropertyMap from '@/components/property/map-ui'
 import ParasManorReview from '@/components/property/paras-manor/pm-review'
 import {droneFootageTranscript, movieTranscript} from '../../transcript.js'
 import VideoChatResponse from '@/components/property/paras-manor/VideoChatResponse'
 import Report from '@/components/property/report'
+import PropertyDetails from '@/components/property/display-property'
 
-async function fetchPropertyListings(locations, minPrice, maxPrice, minBedrooms, maxBedrooms) {
+let configuration = {
+  route: '/',
+  chatbot_instruction: "You are a helpful assistant"
+};
 
-  const areaIds = locations?.map(location => areaIdMap.get(location)).filter(id => id !== undefined);
-  const queryParams = new URLSearchParams({
-    min_price: minPrice,
-    max_price: maxPrice,
-    min_bedrooms: minBedrooms,
-    max_bedrooms: maxBedrooms,
-  })
+const fetchProperties = async (endpoint: string) => {
+  const {data: properties, error} = await supabase
+  .from('properties')
+  .select('*')
+  .eq('route', endpoint)
 
-  areaIds.forEach(id => queryParams.append('area_id', id));
-
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/queryProperties?${queryParams.toString()}`);
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || 'Failed to fetch properties');
-    }
-    return result.data;
-  } catch (error) {
-    console.error('Error fetching properties:', error);
-    return [];
-  }
+  if(error) return null;
+  return properties;
 }
-
-async function fetchAQIForLocation(location) {
-    try {
-
-        const geoResponse = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${process.env.OPENWEATHER_API_KEY}`);
-        
-        const geoData = await geoResponse.json();
-
-        console.log(geoData.length)
-        const res = [];
-        if (geoData.length > 0) {
-          for(let geo of geoData) {
-            const { lat, lon } = geoData[0];
-    
-            // Use the coordinates to get the AQI
-            const aqiResponse = await fetch(`http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${process.env.OPENWEATHER_API_KEY}`);
-            
-            const aqiData = await aqiResponse.json();
-            res.push(aqiData);
-          }  
-          return res;
-        } else {
-            console.error(`Could not find coordinates for ${location}`);
-            return `Could not find coordinates for ${location}, please mention city name `;
-        }
-    } catch (error) {
-        console.error(`Error fetching AQI for ${location}:`, error.message);
-        return 'error';
-    }
-}
-
-let configuration;
-let endpoint = '/';
 
 async function submitUserMessage(content: string, route: string = '/') {
   'use server'
 
-  if(endpoint !== route && route !== '/') {
-    endpoint = route;
+  if(configuration.route !== route && route !== '/') {
     const { data, error } = await supabase
       .from('chatbot')
       .select('configuration')
       .filter('configuration->>route', 'eq', route)
     if(error) throw error
-    console.log(data)
     configuration = data[0]?.configuration
   }
 
@@ -141,7 +90,7 @@ async function submitUserMessage(content: string, route: string = '/') {
   const result = await streamUI({
     model: openai('gpt-4o'),
     initial: <SpinnerMessage />,
-    system: endpoint != '/' ? configuration?.chatbot_instruction : "You are a helpful assistant",
+    system: configuration?.chatbot_instruction,
 
     messages: [
       ...aiState.get().messages.map((message: any) => ({
@@ -177,47 +126,29 @@ async function submitUserMessage(content: string, route: string = '/') {
     },
     tools: {
       displayProperty: {
-        description: 'A tool for displaying an Image Gallery of Paras Manor properties',
+        description: 'A tool for displaying properties',
         parameters: z.object({
-          title: z.string().describe('The heading displayed for the Image Gallery of Paras Manor properties'),
+          title: z.string().describe('The heading displayed for the properties'),
           description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
-        }),
+        }),  
         generate: async function* ({title, description}) {
-          yield <SpinnerMessage />
+          yield <SpinnerMessage /> 
           await sleep(1000)
+          const propertiesData = await fetchProperties(configuration.route)
           return (
             <BotCard>
-              <p className='pb-4'>{endpoint}</p>
+              {propertiesData ? (
+                <>
+                  <p className='font-semibold pb-2'>{title}</p>
+                  <p className='pb-4'>{description}</p>
+                  <PropertyDetails listings={propertiesData}/>    
+                </>
+              ) : <p>Something went wrong</p> 
+              }
             </BotCard>
           );
         }
       },
-      // show_property_map: {
-      //   description: 'A tool for displaying UI for property map and location information',
-      //   parameters: z.object({
-      //       title: z.string().describe('The heading displayed for displaying paras manor properties'),
-      //       description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
-      //       propertyName : z.string().describe('The name of the property for which the user is asking location information or map, the name should exactly match any name from the key Areas in Gurgaon'),
-      //     }),    
-      //     generate: async function* ({title, description, propertyName, details}) {
-      //       yield <SpinnerMessage />
-      //       await sleep(1000)
-      //       const areaId = areaIdMap.get(propertyName)
-      //       return (
-      //         <BotCard>
-      //           {!areaId ? (
-      //             <p>{`No location data available for ${propertyName}`}</p>
-      //           ): (
-      //             <>
-      //               <p className='font-semibold pb-2'>{title}</p>
-      //               <p className='pb-4'>{description}</p>
-      //               <PropertyMap areaId={areaId}/>
-      //             </>
-      //           )} 
-      //         </BotCard>
-      //       );
-      //     }
-      // },
     },    
   })
 

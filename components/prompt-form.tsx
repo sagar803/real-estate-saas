@@ -1,5 +1,4 @@
 import { useModel } from '@/app/context/ModelContext'
-import { Faq } from '@/components/faq'
 import { Button } from '@/components/ui/button'
 import {
   IconArrowElbow,
@@ -304,7 +303,7 @@ export function PromptForm({
         onChange={handleFileChange}
         multiple
       />
-      <div className="relative flex w-full items-center bg-zinc-100 px-6 sm:rounded-full sm:px-6">
+      <div className="relative flex w-full items-center bg-white bg-opacity-20 px-6 sm:rounded-full sm:px-6">
         {canUploadAttachments && (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -398,7 +397,7 @@ export function PromptForm({
           ref={inputRef}
           tabIndex={0}
           onKeyDown={onKeyDown}
-          placeholder="Message Bionic Research"
+          placeholder="Start typing..."
           className="flex-1 min-h-[60px] bg-transparent placeholder:text-zinc-900 resize-none px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
           autoFocus
           spellCheck={false}

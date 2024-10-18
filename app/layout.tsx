@@ -12,12 +12,12 @@ import { GlobalStateProvider } from '@/context/GlobalContext'
 
 //dep
 export const metadata = {
+  metadataBase: new URL('http://localhost:3000'),
   title: {
     default: 'Real Estate Mogul',
     template: `%s - Real Estate Mogul`
   },
-  description:
-    'Talk to your own real estate mogul',
+  description: 'Talk to your own real estate mogul',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon-16x16.png',

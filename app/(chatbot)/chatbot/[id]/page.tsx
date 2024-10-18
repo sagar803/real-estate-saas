@@ -1,9 +1,8 @@
 import { nanoid } from '@/lib/utils'
-import { Chat } from '@/components/chat'
+import { Chat } from '@/components/chat/chat'
 import { AI } from '@/lib/chat/actions'
 import { auth } from '@/auth'
 import { Session } from '@/lib/types'
-import { getMissingKeys } from '@/app/actions'
 import { redirect } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -36,7 +35,6 @@ export default async function ChatPage({ params }: ChatPageProps) {
   }
 
   const session = (await auth()) as Session
-  const missingKeys = await getMissingKeys()
   const id = nanoid()
 
   return (
@@ -45,7 +43,6 @@ export default async function ChatPage({ params }: ChatPageProps) {
         id={id}
         session={session}
         // initialMessages={chat.messages}
-        missingKeys={missingKeys}
       />
     </AI>
   )
