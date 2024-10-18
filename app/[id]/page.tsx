@@ -12,28 +12,7 @@ export interface ChatPageProps {
   }
 }
 
-async function checkChatbotExists(id: string) {
-  const { data, error } = await supabase
-    .from('chatbot')
-    .select('id')
-    .eq('route', id)
-    .maybeSingle()
-  
-  if (error) {
-    console.error('Error checking chatbot existence:', error)
-    return false
-  }
-  
-  return data !== null
-}
-
 export default async function ChatPage({ params }: ChatPageProps) {
-  const chatbotExists = await checkChatbotExists(params.id)
-  
-  if (!chatbotExists) {
-    redirect('/not-found')
-  }
-
   const session = (await auth()) as Session
   const id = nanoid()
 
@@ -42,7 +21,6 @@ export default async function ChatPage({ params }: ChatPageProps) {
       <Chat
         id={id}
         session={session}
-        // initialMessages={chat.messages}
       />
     </AI>
   )
