@@ -62,7 +62,7 @@ export function ChatPanel({
     ]
 
     return (
-        <div className={`transition fixed inset-x-0 bottom-0 w-full duration-300 ease-in-out peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px] dark:from-10%`}>
+        <div className={`transition fixed inset-x-0 bottom-0 w-full peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]`}>
             <ButtonScrollToBottom
                 isAtBottom={isAtBottom}
                 scrollToBottom={scrollToBottom}

@@ -1,4 +1,3 @@
-import { useModel } from '@/app/context/ModelContext'
 import { Button } from '@/components/ui/button'
 import {
   IconArrowElbow,
@@ -50,8 +49,6 @@ export function PromptForm({
   >([])
 
   const [isUploading, setIsUploading] = React.useState(false)
-
-  const { model } = useModel()
 
   React.useEffect(() => {
     if (inputRef.current) {
@@ -245,7 +242,6 @@ export function PromptForm({
       // Create the payload with the compressed and encoded images
       const payload = {
         message: value,
-        model: model,
         images: uploadedImages,
         file: uploadedPdfFiles,
         csv: uploadingCSVFiles
@@ -257,7 +253,6 @@ export function PromptForm({
       const responseMessage = await submitUserMessage(
         value,
         route
-        // model,
         // uploadedImages,
         // uploadedPdfFiles,
         // uploadingCSVFiles
@@ -286,12 +281,6 @@ export function PromptForm({
     }
   }
 
-  const canUploadAttachments = [
-    'gpt-4',
-    'gpt-4-turbo',
-    'gpt-4o-2024-05-13'
-  ].includes(model)
-
   return (
     <form ref={formRef} onSubmit={handleSubmit}>
       <input
@@ -303,8 +292,7 @@ export function PromptForm({
         onChange={handleFileChange}
         multiple
       />
-      <div className="relative flex w-full items-center bg-white bg-opacity-20 px-6 sm:rounded-full sm:px-6">
-        {canUploadAttachments && (
+      <div className="relative flex w-full items-center bg-white bg-opacity-20 px-6 sm:rounded-full sm:px-6 border">
           <Tooltip>
             <TooltipTrigger asChild>
               <span
@@ -322,7 +310,6 @@ export function PromptForm({
             </TooltipTrigger>
             <TooltipContent>Add Attachments</TooltipContent>
           </Tooltip>
-        )}
         <div className="relative mt-2 mb-2 ml-2 flex justify-center space-x-2">
           {uploadedImages.length > 0 && (
             <>
@@ -427,12 +414,6 @@ export function PromptForm({
       <p className="text-xs text-gray-300 ml-4 transition-opacity duration-300 ease-in-out text-center mt-2">
         {'Models may make mistakes'}
       </p>
-      <p className="text-xs text-gray-300 ml-4 transition-opacity duration-300 ease-in-out text-center">
-        {['gemma-7b-it', 'mixtral-8x7b-32768'].includes(model)
-          ? '❗Prone to rate limits'
-          : ''}
-      </p>
-
     </form>
   )
 }
