@@ -11,22 +11,6 @@ interface BedroomSelectProps {
 
 
 export function BedroomSelect({ bedrooms }: BedroomSelectProps) {
-
-  // useEffect(() => {
-  //   async function insertData() {
-  //     const response = await fetch('/api/insertProperties', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       }
-  //     });
-
-  //     const data = await response.json();
-  //     console.log(data);
-  //   }
-
-  //   insertData();
-  // }, []);
   const [, setMessages] = useUIState<typeof AI>();
   const { submitUserMessage } = useActions<typeof AI>();
   const [selected, setSelected] = React.useState<string>('');
