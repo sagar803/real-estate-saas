@@ -4,7 +4,7 @@
 
 import { Skeleton } from "../ui/skeleton";
 import React from 'react';
-import PropertyCard from './property-card';
+import PropertyCard from '../main/property-card';
 
 const PropertyDetailsSkeleton = () => {
   return (

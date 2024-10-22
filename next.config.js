@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   images: {
-    domains: ['www.themanorparas.com'],
+    domains: [
+      // 'www.themanorparas.com',
+      'zyzydqwfyafzigaruupg.supabase.co'
+    ],
     remotePatterns: [
       {
         protocol: 'https',

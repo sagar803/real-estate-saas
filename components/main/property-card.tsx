@@ -7,10 +7,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Home, Bed, Calendar, Bath, IndianRupee, Building, Compass, Star, StarHalfIcon, StarIcon } from 'lucide-react';
 import { StarFilledIcon } from '@radix-ui/react-icons';
+import { Card } from '../ui/card';
 
 const PropertyCard = ({listing, idx}) => {
 
-  console.log(listing)
     let isImagesInfinite = listing.images.length > 1;
     let isFeatureInfinite = listing.features.length > 1;
 
@@ -22,6 +22,7 @@ const PropertyCard = ({listing, idx}) => {
         pauseOnHover: true,
         autoplaySpeed: 2000,
         speed: 2000,
+        arrows: false
     };
     
     const imageSettings = {
@@ -32,7 +33,7 @@ const PropertyCard = ({listing, idx}) => {
         slidesToShow: 1,
         slidesToScroll: 1,
         autoplaySpeed: 3000,
-        arrows: true,
+        arrows: true,        
         responsive: [
             {
             breakpoint: 1024,
@@ -52,7 +53,7 @@ const PropertyCard = ({listing, idx}) => {
     } = listing;
 
     return (
-        <div key={idx} className="mb-2 p-4 border rounded-lg shadow-lg">
+        <Card key={idx} className="mb-2 p-4 border rounded-lg shadow-lg bg-white bg-opacity-40">
           <div>
               <h2 className="text-md font-semibold inline mr-2">{meta.location}</h2>
               <p className="text-gray-600 text-sm inline">{meta.address}</p>
@@ -62,7 +63,7 @@ const PropertyCard = ({listing, idx}) => {
                 images && images.length > 0 ? (
                     <Slider {...imageSettings}>
                       {images.map((image, index) => (
-                          <img key={index} src={image} alt={`Property ${index + 1}`} className="px-1 rounded-lg w-full h-44 object-cover" />
+                          <img key={index} src={image.url} alt={`Property ${index + 1}`} className="px-1 rounded-lg w-full h-44 object-cover" />
                       ))}
                     </Slider>
                 ) : (
@@ -110,7 +111,7 @@ const PropertyCard = ({listing, idx}) => {
             <Slider {...featureSettings}>
               {features.map((feature, index) => (
                 <div key={index} className="p-1">
-                    <p key={index} className="text-sm px-2 text-gray-700 p-1 border border-blue-300 rounded-sm shadow-sm">{feature}</p>
+                    <p key={index} className="text-sm bg-white px-2 text-gray-700 p-1 border rounded-sm shadow-sm">{feature}</p>
                 </div>
               ))}
             </Slider>
@@ -127,7 +128,7 @@ const PropertyCard = ({listing, idx}) => {
               ))}
             </ul>
           </div>
-        </div>
+        </Card>
       );
 }
 

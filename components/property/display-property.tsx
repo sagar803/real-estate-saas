@@ -2,7 +2,7 @@
 'use client'
 
 import React from 'react';
-import PropertyCard from './property-card';
+import PropertyCard from '../main/property-card';
 
 const PropertyDetails = ({ listings }) => {
   console.log(listings)

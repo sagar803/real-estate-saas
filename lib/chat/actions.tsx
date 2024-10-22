@@ -19,7 +19,6 @@ import {
 } from '@/components/stocks'
 import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { z } from 'zod'
-import { CategoryMultiSelect } from '@/components/property/category-multi-select'
 import { DateSelect } from '@/components/date-single-select'
 import {
   runAsyncFnWithoutBlocking,
@@ -43,6 +42,8 @@ import {droneFootageTranscript, movieTranscript} from '../../transcript.js'
 import VideoChatResponse from '@/components/property/paras-manor/VideoChatResponse'
 import Report from '@/components/property/report'
 import PropertyDetails from '@/components/property/display-property'
+import ImageCarousel from '@/components/main/image-carousel'
+import VideoCarousel from '@/components/main/video-carousel'
 
 let configuration = {
   route: '/',
@@ -149,6 +150,38 @@ async function submitUserMessage(content: string, route: string = '/') {
           );
         }
       },
+      showImages: {
+        description: 'A tool for displaying property images',
+        parameters: z.object({
+          title: z.string().describe('The heading displayed for the properties images UI'),
+          description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+        }),  
+        generate: async function* ({title, description}) {
+          yield <SpinnerMessage /> 
+          await sleep(1000)
+          return (
+            <BotCard>
+              <ImageCarousel route={route} title={title} description={description}/>
+            </BotCard>
+          );
+        }
+      },
+      showVideos: {
+        description: 'A tool for displaying UI for videos',
+        parameters: z.object({
+          title: z.string().describe('The heading displayed for the properties videos UI'),
+          description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+        }),  
+        generate: async function* ({title, description}) {
+          yield <SpinnerMessage /> 
+          await sleep(1000)
+          return (
+            <BotCard>
+              <VideoCarousel route={route} title={title} description={description}/>
+            </BotCard>
+          );
+        }
+      },
     },    
   })
 
@@ -229,11 +262,7 @@ export const getUIStateFromAIState = (aiState: Chat) => {
       display:
         message.role === 'tool' ? (
           message.content.map(tool => {
-            return tool.toolName === 'show_category_selection' ? (
-              <BotCard>
-                <CategoryMultiSelect categories={tool.result.categories} />
-              </BotCard>
-            ) : tool.toolName === 'show_date_range_selection' ? (
+            return tool.toolName === 'show_date_range_selection' ? (
               <BotCard>
                 <DateSelect />
               </BotCard>

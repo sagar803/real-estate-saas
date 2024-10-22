@@ -11,7 +11,7 @@ export default async function IndexPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      <Header name={'Chatbot'}/>
       <main className="flex flex-col flex-1">
         <AI initialAIState={{ chatId: id, messages: [] }}>
           <Chat id={id} session={session} />
