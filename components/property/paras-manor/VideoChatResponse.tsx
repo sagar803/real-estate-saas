@@ -6,26 +6,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useInView } from 'react-intersection-observer';
 
 const VideoChatResponse = ({ content }) => {
-    const {text, time } = content;
+  const {text, time, url } = content;
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const { ref: containerRef, inView } = useInView({
     threshold: 0.5,
   });
-  const videos = [
-    "https://www.themanorparas.com/video/paras-Movie-whatsapp.mp4",
-    "https://www.themanorparas.com/video/Paras-Drone-Whatsapp.mp4"
-  ]
 
   useEffect(() => {
     if (videoRef.current) {
-      // Convert time string to seconds
-      const [hours, minutes, seconds] = time.split(':').map(Number);
-      const startTime = minutes * 60 + seconds;
-      
-      console.log(minutes, seconds);
-      console.log(startTime);
-      videoRef.current.currentTime = startTime;
+      videoRef.current.currentTime = time;
 
       if (inView) {
         videoRef.current.play().catch(error => {
@@ -47,8 +37,8 @@ const VideoChatResponse = ({ content }) => {
 
   return (
     <div ref={containerRef} className="w-full h-full max-w-2xl mx-auto space-y-6">
-      <Card className='border-none shadow-none'>
-        <CardContent className="p-1">
+      <Card className='border-none shadow-lg bg-transparent'>
+        <CardContent className="p-0">
           <video 
             ref={videoRef}
             width="100%" 
@@ -56,7 +46,7 @@ const VideoChatResponse = ({ content }) => {
             playsInline
             className="focus:outline-none rounded-lg"
           >
-            <source src="https://www.themanorparas.com/video/paras-Movie-Whatsapp.mp4" type="video/mp4" />
+            <source src={url} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </CardContent>

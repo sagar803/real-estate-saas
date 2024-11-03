@@ -166,22 +166,63 @@ async function submitUserMessage(content: string, route: string = '/') {
           );
         }
       },
-      showVideos: {
-        description: 'A tool for displaying UI for videos',
-        parameters: z.object({
-          title: z.string().describe('The heading displayed for the properties videos UI'),
-          description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
-        }),  
-        generate: async function* ({title, description}) {
-          yield <SpinnerMessage /> 
-          await sleep(1000)
-          return (
-            <BotCard>
-              <VideoCarousel route={route} title={title} description={description}/>
+      VideoAnalysis: tool({
+        description: 'A tool to be used if there is any query related to video content, asking about the specific visuals or to show any of the visuals. like a targeted question etc ',
+        parameters: z.object({ query: z.string().describe('The query related the video content') }),
+        generate: async function* ({ query }) {          
+          yield <BotCard> <p className='text-md animate-pulse'>Processing Video content...</p> </BotCard>
+          await sleep(1000);
+          const toolCallId = nanoid();          
+
+          try {
+            const { data: result, error } = await supabase
+            .from('properties')
+            .select('videos')
+            .filter('route', 'eq', route)
+
+            if(error) throw error;
+            if(!result) throw new Error('no result');
+
+            const { text, finishReason, usage } = await generateText({
+              system: `You are a helpful assistant. Process the user query and create an answer utilizing the contents along with the timestamp from the videos. Transcript and aiDescription(It is the description of the frame at that particular time stamp), you shoud use both of them to form the return If the video is unable to provide an answer to the query, respond with a cheerful or humorous message like: "Hmm, sorry! We couldn't find that in the brochure or the video. But hey, let some things be left to be seen and experienced! We will let the user builder know." Always set the time to 0. 
+                      IMPORTANT: Your response must be in valid JSON format with the following structure, never return an array:
+                      {
+                        "url" : "https://www.example.com"
+                        "time": number,
+                        "text": "Response of the user query utilizing the video transcript content"
+                      }`,                      
+              model: openai('gpt-4o'),
+              prompt: `query: ${query} Transcript: ${JSON.stringify(result[0].videos)}`
+            });
+
+            let data = text.replace(/```json|```/g, '').trim();
+            const parsedResponse = JSON.parse(data);
+  
+            return <VideoChatResponse content={parsedResponse} />
+          } catch (error) {
+            console.error("An error occurred:", error);
+            return <BotCard>
+              <p>Sorry, an error occurred while generating the response.</p>
             </BotCard>
-          );
-        }
-      },
+          }
+        },
+      }),
+      // showVideos: {
+      //   description: 'A tool for displaying UI for videos',
+      //   parameters: z.object({
+      //     title: z.string().describe('The heading displayed for the properties videos UI'),
+      //     description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+      //   }),  
+      //   generate: async function* ({title, description}) {
+      //     yield <SpinnerMessage /> 
+      //     await sleep(1000)
+      //     return (
+      //       <BotCard>
+      //         <VideoCarousel route={route} title={title} description={description}/>
+      //       </BotCard>
+      //     );
+      //   }
+      // },
     },    
   })
 

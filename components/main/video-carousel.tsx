@@ -23,7 +23,6 @@ const VideoCarousel = ({ route, title, description }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(videos)
   useEffect(() => {
     const fetchVideos = async () => {
       const { data, error } = await supabase
