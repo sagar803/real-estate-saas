@@ -31,7 +31,7 @@ import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
 import { supabase } from '../../lib/supabaseClient';
 import { title } from 'process'
-import { generateText, tool } from 'ai'
+import { generateObject, generateText, tool } from 'ai'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import PropertyDetailsSkeleton from '@/components/property/property-card-skeleton'
@@ -44,6 +44,40 @@ import Report from '@/components/property/report'
 import PropertyDetails from '@/components/property/display-property'
 import ImageCarousel from '@/components/main/image-carousel'
 import VideoCarousel from '@/components/main/video-carousel'
+
+let system = `
+Let's keep it closer to the original, with some tweaks for clarity and a bit of generalization, while preserving the focus on enthusiasm and guiding the user. Here's an updated version that stays true to the initial structure:
+
+---
+
+You're a friendly and knowledgeable virtual guide for a prestigious residential property, designed to highlight its exceptional features in every interaction. Your goal is to showcase the unique lifestyle and value this property offers while engaging the user with questions that bring out their interests. You'll incorporate specific property details, subtly creating urgency if a limited inventory is relevant.
+
+**Conversation Style:**
+- Start each interaction with a warm, welcoming introduction that mentions the property name and purpose. Examples:
+  - "Hello! I'm your guide to discovering this luxurious property. What aspects of premium living are most important to you?"
+  - "Greetings! I'm here to showcase this stunning residence. Are you looking for a home that blends luxury with convenience?"
+- Keep responses brief, friendly, and focused on the property's unique features.
+
+**Key Principles**:
+1. **Lead with a Feature**: Open each response with a fact or feature about the property to set the context.
+2. **Ask Engaging Questions**: Connect the property's features to the user's potential needs or preferences with relatable questions.
+3. **Guide the Conversation Back**: Even when answering unrelated questions, bring the topic back to the property's strengths.
+4. **Use Vivid Descriptions**: Help users imagine living at the property by mentioning aspects like scenic views, modern amenities, or spacious layouts.
+5. **Sprinkle Interesting Facts**: Keep the user engaged with unique facts about the property, location, or lifestyle benefits.
+
+**Response Structure Example**:
+- "[Property feature or fact]. [Relatable question to the user]. Speaking of [related feature], did you know [another property detail]?"
+
+**Sample Conversation Starters**:
+- "Hello! I'm your expert guide for this residence, designed to redefine luxury living. What features are most important to you in a home?"
+- "Welcome! Are you seeking a home that offers both elegance and practicality?"
+
+**Example Interaction**:
+User: "Tell me about the area."
+Guide: "[Property name] is located in a prime, serene neighborhood offering both tranquility and city connectivity. Just minutes from key areas, it's ideal for balancing work and relaxation. Do you often commute for work or enjoy city activities?"
+
+Your role is to inspire interest by connecting property features with user needs, showcasing the unique lifestyle offered, and engaging them with interesting facts throughout the conversation.
+`
 
 let configuration = {
   route: '/',
@@ -91,7 +125,7 @@ async function submitUserMessage(content: string, route: string = '/') {
   const result = await streamUI({
     model: openai('gpt-4o'),
     initial: <SpinnerMessage />,
-    system: configuration?.chatbot_instruction,
+    system: `${configuration?.chatbot_instruction} ${system}`,
 
     messages: [
       ...aiState.get().messages.map((message: any) => ({
@@ -182,23 +216,19 @@ async function submitUserMessage(content: string, route: string = '/') {
 
             if(error) throw error;
             if(!result) throw new Error('no result');
-
-            const { text, finishReason, usage } = await generateText({
-              system: `You are a helpful assistant. Process the user query and create an answer utilizing the contents along with the timestamp from the videos. Transcript and aiDescription(It is the description of the frame at that particular time stamp), you shoud use both of them to form the return If the video is unable to provide an answer to the query, respond with a cheerful or humorous message like: "Hmm, sorry! We couldn't find that in the brochure or the video. But hey, let some things be left to be seen and experienced! We will let the user builder know." Always set the time to 0. 
-                      IMPORTANT: Your response must be in valid JSON format with the following structure, never return an array:
-                      {
-                        "url" : "https://www.example.com"
-                        "time": number,
-                        "text": "Response of the user query utilizing the video transcript content"
-                      }`,                      
-              model: openai('gpt-4o'),
+            
+            const res = await generateObject({
+              model: openai('gpt-4-turbo'),
+              schema: z.object({
+                url: z.string(),
+                time: z.number(),
+                text: z.string(),
+              }),
+              system: "You are a helpful assistant. Process the user query and create an answer utilizing the contents along with the timestamp from the videos. Transcript and aiDescription(It is the description of the frame at that particular time stamp), you shoud use both of them to form the return If the video is unable to provide an answer to the query, respond with a cheerful or humorous message like: Hmm, sorry! We couldn't find that in the brochure or the video. But hey, let some things be left to be seen and experienced! We will let the user builder know. Always set the time to 0.",
               prompt: `query: ${query} Transcript: ${JSON.stringify(result[0].videos)}`
             });
-
-            let data = text.replace(/```json|```/g, '').trim();
-            const parsedResponse = JSON.parse(data);
   
-            return <VideoChatResponse content={parsedResponse} />
+            return <VideoChatResponse content={res.object} />
           } catch (error) {
             console.error("An error occurred:", error);
             return <BotCard>
