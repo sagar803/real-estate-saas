@@ -125,7 +125,7 @@ async function submitUserMessage(content: string, route: string = '/') {
   const result = await streamUI({
     model: openai('gpt-4o'),
     initial: <SpinnerMessage />,
-    system: `${configuration?.chatbot_instruction} ${system}`,
+    system: `${system} And these are important information: ${configuration?.chatbot_instruction} `,
 
     messages: [
       ...aiState.get().messages.map((message: any) => ({
@@ -223,12 +223,13 @@ async function submitUserMessage(content: string, route: string = '/') {
                 url: z.string(),
                 time: z.number(),
                 text: z.string(),
+                isFound: z.boolean().describe('True if relevant results were found'), 
               }),
               system: "You are a helpful assistant. Process the user query and create an answer utilizing the contents along with the timestamp from the videos. Transcript and aiDescription(It is the description of the frame at that particular time stamp), you shoud use both of them to form the return If the video is unable to provide an answer to the query, respond with a cheerful or humorous message like: Hmm, sorry! We couldn't find that in the brochure or the video. But hey, let some things be left to be seen and experienced! We will let the user builder know. Always set the time to 0.",
               prompt: `query: ${query} Transcript: ${JSON.stringify(result[0].videos)}`
             });
   
-            return <VideoChatResponse content={res.object} />
+            return <BotCard><VideoChatResponse content={res.object} /></BotCard>
           } catch (error) {
             console.error("An error occurred:", error);
             return <BotCard>
