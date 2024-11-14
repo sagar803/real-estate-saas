@@ -184,24 +184,8 @@ async function submitUserMessage(content: string, route: string = '/') {
           );
         }
       },
-      showImages: {
-        description: 'A tool for displaying property images',
-        parameters: z.object({
-          title: z.string().describe('The heading displayed for the properties images UI'),
-          description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
-        }),  
-        generate: async function* ({title, description}) {
-          yield <SpinnerMessage /> 
-          await sleep(1000)
-          return (
-            <BotCard>
-              <ImageCarousel route={route} title={title} description={description}/>
-            </BotCard>
-          );
-        }
-      },
       VideoAnalysis: tool({
-        description: 'A tool to be used if there is any query related to video content, asking about the specific visuals or to show any of the visuals. like a targeted question etc ',
+        description: 'A tool to be used if there is any query related to video content or asking about the specific visuals or to show any of the visuals. like a targeted question etc ',
         parameters: z.object({ query: z.string().describe('The query related the video content') }),
         generate: async function* ({ query }) {          
           yield <BotCard> <p className='text-md animate-pulse'>Processing Video content...</p> </BotCard>
@@ -238,6 +222,22 @@ async function submitUserMessage(content: string, route: string = '/') {
           }
         },
       }),
+      showImages: {
+        description: 'A tool for displaying property images and not any specific image',
+        parameters: z.object({
+          title: z.string().describe('The heading displayed for the properties images UI'),
+          description: z.string().describe('Sub heading in string format and it should never be null or undefined'),
+        }),  
+        generate: async function* ({title, description}) {
+          yield <SpinnerMessage /> 
+          await sleep(1000)
+          return (
+            <BotCard>
+              <ImageCarousel route={route} title={title} description={description}/>
+            </BotCard>
+          );
+        }
+      },
       // showVideos: {
       //   description: 'A tool for displaying UI for videos',
       //   parameters: z.object({
