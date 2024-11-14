@@ -55,8 +55,8 @@ const PropertyCard = ({listing, idx}) => {
     return (
         <Card key={idx} className="mb-2 p-4 border rounded-lg shadow-lg bg-white bg-opacity-40">
           <div>
-              <h2 className="text-md font-semibold inline mr-2">{meta.location}</h2>
-              <p className="text-gray-600 text-sm inline">{meta.address}</p>
+              <h2 className="text-md font-semibold inline mr-2">{meta.address}</h2>
+              {meta.area && <p className="text-gray-600 text-sm inline">{`(${meta.area})`}</p> }
           </div>
           <div className="py-4 scale-105">
             {
